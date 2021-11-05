@@ -2,9 +2,15 @@ package main.util;
 
 import java.awt.geom.AffineTransform;
 
+/**
+ * {@link AffineTransform}の操作を簡略化するクラス。
+ */
 public class TransformUtil {
 
+	private TransformUtil()
+	{
 
+	}
 
 	public static void setTranslate(AffineTransform t, double x, double y)
 	{
@@ -31,20 +37,20 @@ public class TransformUtil {
 		//現在の中心点
 		double startX = x * t.getScaleX();
 		double startY = y * t.getScaleY();
-		
+
 		t.scale(scale, scale);
-		
+
 		//スケーリング後の中心点
 		double appliedX = x * t.getScaleX();
 		double appliedY = y * t.getScaleY();
-		
+
 		//中心点との差(スケーリングしたため、差もスケーリング)
 		double moveX = (startX - appliedX) / t.getScaleX();
 		double moveY = (startY - appliedY) / t.getScaleY();
-		
-		
+
+
 		t.translate(moveX, moveY);
-		
+
 	}
 
 }

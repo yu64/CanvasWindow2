@@ -1,5 +1,12 @@
 package main.time;
 
+import main.logic.AppLogic;
+
+/**
+ * 指定したtickと、現在の時間からTpf(tick per frame)を求める。<br>
+ * {@link AppLogic}がこれを用いている。
+ *
+ */
 public class TpfMeasurer {
 
 	private Clock clock;

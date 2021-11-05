@@ -10,6 +10,9 @@ import java.util.function.BooleanSupplier;
 import main.debug.TextTree;
 import main.logic.Updatable;
 
+/**
+ * 状態遷移表を示す。更新可能。
+ */
 public class StateTable<S extends State> implements Updatable, TextTree{
 
 	private S now;
@@ -22,6 +25,10 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		this.now = initState;
 	}
 
+	/**
+	 * 指定した状態かつ、指定した条件が真であるとき、<br>
+	 * 指定した次の状態に遷移することを登録する。
+	 */
 	public void register(S now, S next, BooleanSupplier condition)
 	{
 		Map<S, Set<BooleanSupplier>> map = this.table.get(now);
@@ -52,6 +59,9 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		return this.now;
 	}
 
+	/**
+	 * 強制的に状態を変更する。
+	 */
 	public void nextState(S next)
 	{
 		this.now = next;

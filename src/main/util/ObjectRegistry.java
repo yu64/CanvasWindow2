@@ -1,11 +1,16 @@
 package main.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+/**
+ * 複数のインターフェイスを持つクラスをそれぞれ登録するコレクション。<br>
+ * 標準のコレクションとは互換性がない。<br>
+ *
+ */
 @SuppressWarnings("unchecked")
 public class ObjectRegistry<T> {
 
@@ -18,6 +23,12 @@ public class ObjectRegistry<T> {
 	public void registerClass(Class<? extends T> clazz, Collection<? extends T> c)
 	{
 		this.pair.put(clazz, c);
+	}
+
+	//管理するオブジェクトの種類を追加
+	public void registerClass(Class<? extends T> clazz)
+	{
+		this.registerClass(clazz, new ArrayList<T>());
 	}
 
 	//管理するオブジェクトの種類を削除。

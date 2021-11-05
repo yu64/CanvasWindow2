@@ -4,6 +4,9 @@ import java.util.concurrent.TimeUnit;
 
 import main.logic.Updatable;
 
+/**
+ * 現在の時間に基づいて、指定された処理を一定間隔で実行する。
+ */
 public class TimeInterval implements Updatable{
 
 	private Clock clock;

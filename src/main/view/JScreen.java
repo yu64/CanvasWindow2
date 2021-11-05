@@ -8,6 +8,11 @@ import javax.swing.JPanel;
 
 import main.view.scene.Drawable;
 
+/**
+ * 指定され一つの描画物を描画するパネル。<br>
+ * {@link AppWindow}を改造するときに使用できる。
+ *
+ */
 public class JScreen extends JPanel{
 
 
@@ -18,7 +23,7 @@ public class JScreen extends JPanel{
 		Objects.requireNonNull(obj);
 
 		this.obj = obj;
-		
+
 	}
 
 	@Override
@@ -27,10 +32,10 @@ public class JScreen extends JPanel{
 		super.paintComponent(g);
 
 		Graphics2D g2 = (Graphics2D) g.create();
-		
+
 		this.obj.draw(g2);
-		
-		
+
+
 		g2.dispose();
 
 	}

@@ -2,6 +2,9 @@ package main.time;
 
 import main.logic.Updatable;
 
+/**
+ * tickの値に基づいて、指定された処理を一定間隔で実行する。
+ */
 public class TickInterval implements Updatable{
 
 	private long tick;

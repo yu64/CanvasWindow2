@@ -6,6 +6,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import main.debug.TextTree;
 import main.time.TpfMeasurer;
 
+/**
+ * アプリケーションのロジックを管理する。<br>
+ * 更新が必要なものを登録することで自動的に更新し続ける。<br>
+ * tickを管理している。
+ *
+ */
 public class AppLogic implements TextTree{
 
 	private boolean isStop = true;
@@ -22,6 +28,7 @@ public class AppLogic implements TextTree{
 	{
 		this.objSet = objSet;
 	}
+
 
 	public void add(Updatable obj)
 	{

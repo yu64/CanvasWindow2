@@ -8,7 +8,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import main.event.Dispatcher;
+import main.event.EventManager;
 
+/**
+ * {@link EventManager}からきたAWTEventをリスナーに分配するクラス。<br>
+ * {@link EventManager}に登録する必要がある。
+ */
 public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 
 	private Map<Integer, Set<AwtListener>> action = new ConcurrentHashMap<>();
@@ -32,18 +37,18 @@ public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 		{
 			return;
 		}
-		
+
 		Set<AwtListener> set = this.action.get(exId);
 		if(set == null)
 		{
 			set = new HashSet<>();
 		}
-		
+
 		set.add(listener);
-		
+
 		this.action.put((Integer)exId, set);
 	}
-	
+
 	@Override
 	public void removeListener(Object exId, AwtListener listener)
 	{
@@ -52,14 +57,14 @@ public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 		{
 			return;
 		}
-		
+
 		set.remove(listener);
-		
+
 		if(set.isEmpty())
 		{
 			return;
 		}
-		
+
 		this.action.put((Integer)exId, set);
 	}
 
@@ -68,18 +73,18 @@ public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 	{
 		this.action.clear();
 	}
-	
+
 
 	@Override
 	public void dispatch(float tpf, AWTEvent event)
 	{
-		
+
 		Set<AwtListener> set =  this.action.get(event.getID());
 		if(set == null)
 		{
 			return;
 		}
-		
+
 		try
 		{
 			for(AwtListener listener : set)
@@ -101,21 +106,21 @@ public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 		String tab1 = "\t".repeat(nest);
 		String tab2 = tab1 + "\t";
 		String title = this.getClass().getSimpleName();
-		
+
 		sb.append(tab1).append(title).append(enter);
-		
+
 		for(Entry<Integer, Set<AwtListener>> e : this.action.entrySet())
 		{
 			sb.append(tab2).append(e.getKey()).append(enter);
-			
+
 			String tab3 = tab2 + "\t";
 			for(AwtListener listener : e.getValue())
 			{
 				sb.append(tab3).append(listener).append(enter);
 			}
-			
+
 		}
-		
+
 		return sb;
 	}
 

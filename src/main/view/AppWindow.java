@@ -7,8 +7,15 @@ import java.util.Objects;
 import javax.swing.JFrame;
 
 import main.logic.Updatable;
+import main.view.scene.Drawable;
 import main.view.scene.Node;
 
+/**
+ * アプリケーションのGUI。<br>
+ * 描画物を追加するときは、ルートノードに追加すること。<br>
+ * 描画するために更新する必要がある。
+ *
+ */
 public class AppWindow extends JFrame implements Updatable{
 
 	private JScreen screen;
@@ -35,17 +42,17 @@ public class AppWindow extends JFrame implements Updatable{
 		Objects.requireNonNull(obj);
 
 		this.root = obj;
-		
-		this.screen = new JScreen(obj);
+
+		this.screen = this.createScreen(obj);
 		this.screen.setPreferredSize(size);
 		this.screen.setFocusable(true);
-		
+
 		this.add(this.screen);
 		this.pack();
-		
+
 		this.screen.requestFocusInWindow();
-		
-		
+
+
 		if(pos == null)
 		{
 			this.setLocationRelativeTo(null);
@@ -55,6 +62,11 @@ public class AppWindow extends JFrame implements Updatable{
 			this.getLocation(pos);
 		}
 
+	}
+
+	protected JScreen createScreen(Drawable obj)
+	{
+		return new JScreen(obj);
 	}
 
 	public Node getRoot()
@@ -67,8 +79,8 @@ public class AppWindow extends JFrame implements Updatable{
 	{
 		this.repaint();
 	}
-	
-	
-	
+
+
+
 
 }
