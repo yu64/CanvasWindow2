@@ -35,7 +35,7 @@ public class MainTest {
 
 		Node area = new Node("areaNode");
 		scroll.add(area);
-		
+
 		Node overray = new Node("overrayNode");
 		app.getRootNode().add(overray);
 
@@ -53,18 +53,18 @@ public class MainTest {
 
 		SubFrameNode sub = new SubFrameNode("sub", area);
 		overray.add(sub);
-		
-		sub.setSize(200, 200);
-		
+
+		sub.setRect(200, 200);
+
 		sub.getTransform().translate(120, 120);
-		
+
 		app.getLogic().add(tpf -> {
-			
+
 			sub.track(pos);
-			
+
 		});
-		
-		
+
+
 
 
 
@@ -102,8 +102,8 @@ public class MainTest {
 			g2.fillOval(pos.x, pos.y, 10, 10);
 
 		});
-		
-		
+
+
 		return pos;
 	}
 
@@ -118,7 +118,7 @@ public class MainTest {
 			g2.setColor(Color.BLUE);
 			g2.drawLine(0, -1000, 0, 1000);
 
-			
+
 		});
 	}
 
@@ -193,9 +193,9 @@ public class MainTest {
 			node.getTransform().translate(x, y);
 
 		});
-		
+
 		node.add(g2 -> {
-			
+
 			g2.setColor(Color.BLUE);
 			g2.drawString(node.getName() + ": " + node.getTransform(), 50, 70);
 		});
@@ -271,76 +271,76 @@ public class MainTest {
 
 		System.out.println(TextTree.getText(table));
 	}
-	
+
 	public static void testLoad(App app, Node node)
 	{
 		LoaderManager loader = new LoaderManager();
 		app.getLogic().add(loader);
-		
+
 		loader.register(new TestReader2());
-		
+
 		String path1 = "main/value/test/testFile1.txt";
 		String path2 = "main/value/test/testFile2.txt";
-		
+
 		ReadTicket<TestObject1> ticket1 = loader.load(TestObject1.class, path1);
 		ReadTicket<TestObject1> ticket2 = loader.load(TestObject1.class, path1);
 		ReadTicket<TestObject2> ticket3 = loader.load(TestObject2.class, path2);
 
-		
+
 		node.add(g2 -> {
-			
+
 			TestObject1 obj1 = ticket1.getResult();
 			TestObject1 obj2 = ticket2.getResult();
 			TestObject2 obj3 = ticket3.getResult();
-			
+
 			if(obj1 != null)
 			{
 				g2.drawString(obj1.getText(), 100, 100);
 			}
-			
+
 			if(obj2 != null)
 			{
 				g2.drawString(obj2.getText(), 100, 120);
 			}
-			
+
 			if(obj3 != null)
 			{
 				g2.drawString(obj3.getText(), 100, 140);
 			}
-			
+
 		});
-		
+
 	}
 
 
 	private static void testMouse(App app, Node area, Node scroll)
 	{
 		EventManager event = app.getEventManager();
-		
+
 		Point pos = new Point();
-		
+
 		AwtListener action = (tpf, v) -> {
-			
+
 			MouseEvent e = (MouseEvent) v;
-			
+
 			Point screenPos = e.getPoint();
 			pos.setLocation(scroll.getTransform().inverseTransform(screenPos, pos));
-			
+
 		};
-		
+
 		event.add(MouseEvent.MOUSE_DRAGGED, action);
 		event.add(MouseEvent.MOUSE_PRESSED, action);
 		event.add(MouseEvent.MOUSE_RELEASED, action);
-		
+
 		area.add(g2 -> {
-			
+
 			g2.setColor(Color.MAGENTA);
 			g2.fillOval(pos.x - 10, pos.y - 10, 20, 20);
-			
+
 		});
-		
+
 	}
-	
-	
-	
+
+
+
 }

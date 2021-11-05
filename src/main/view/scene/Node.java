@@ -8,7 +8,13 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import main.debug.TextTree;
+import main.view.AppWindow;
 
+/**
+ * シーングラフのノードを示すクラス。<br>
+ * 描画するときは、{@link AppWindow}のルートノードに登録する必要がある。
+ *
+ */
 public class Node implements Drawable, TextTree{
 
 	private Node parent = null;
@@ -110,7 +116,7 @@ public class Node implements Drawable, TextTree{
 		for(Drawable d : this.child)
 		{
 			action.action(nest, d);
-			
+
 			if(d instanceof Node)
 			{
 				Node node = (Node) d;
@@ -128,14 +134,14 @@ public class Node implements Drawable, TextTree{
 		String enter = System.lineSeparator();
 		String tab1 = "\t".repeat(nest);
 		String title = this.getClass().getSimpleName();
-		
+
 		sb.append(tab1);
 		sb.append(title);
 		sb.append("[").append(this.getName()).append("]");
 		sb.append(enter);
-		
+
 		String tab2 = tab1 + "\t";
-		
+
 		for(Drawable d : this.child)
 		{
 			if(d instanceof Node)
@@ -144,12 +150,12 @@ public class Node implements Drawable, TextTree{
 				sb = node.createTreeText(sb, nest + 1);
 				continue;
 			}
-			
+
 			sb.append(tab2);
 			sb.append(d);
 			sb.append(enter);
 		}
-		
+
 		return sb;
 	}
 
@@ -162,23 +168,23 @@ public class Node implements Drawable, TextTree{
 		g2.transform(this.transform);
 
 		this.drawExtend(g2, v -> {
-			
+
 			for(Drawable d : this.child)
 			{
 				d.draw(v);
 			}
-			
+
 		});
 
 		g2.setTransform(old);
 	}
-	
+
 	protected void drawExtend(Graphics2D g2, Consumer<Graphics2D> action)
 	{
 		action.accept(g2);
 	}
-	
-	
+
+
 
 	@Override
 	public String toString()

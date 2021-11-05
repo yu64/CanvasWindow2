@@ -19,7 +19,9 @@ public class SubFrameNode extends Node{
 
 	private Node targetNode;
 	private Node innerNode;
-	private Rectangle rect = new Rectangle();
+	private Shape shape;
+	private Color back = Color.LIGHT_GRAY;
+
 
 	public SubFrameNode(String name, Node targetNode)
 	{
@@ -33,32 +35,58 @@ public class SubFrameNode extends Node{
 
 		this.innerNode.add(g2 -> {
 
-
 			this.targetNode.draw(g2);
-
 		});
 
 	}
 
-	public void setSize(int width, int height)
+	/**
+	 * 描画範囲を矩形の範囲を指定します。<br>
+	 * 原点を中心に、指定の縦幅、横幅の矩形です。
+	 */
+	public void setRect(int width, int height)
 	{
 		double x = -width / 2.0D;
 		double y = -height / 2.0D;
 
-		this.rect.setFrame(x, y, width, height);
+		Rectangle rect = new Rectangle();
+
+		rect.setFrame(x, y, width, height);
+		this.shape = rect;
 	}
 
+	public void setShape(Shape shape)
+	{
+		this.shape = shape;
+	}
+
+	public void setBackgroundColor(Color back)
+	{
+		this.back = back;
+	}
+
+	/**
+	 * 指定座標を中心にします。
+	 */
 	public void track(double x, double y)
 	{
 		AffineTransform t = this.innerNode.getTransform();
 		TransformUtil.setTranslate(t, -x, -y);
 	}
 
+	/**
+	 * 指定座標を中心にします。
+	 */
 	public void track(Point pos)
 	{
 		this.track(pos.getX(), pos.getY());
 	}
 
+	/**
+	 * このオブジェクトと、描画対象の{@link Node}、<br>
+	 * の間にある{@link Node}を取得。<br>
+	 * 装飾をつけるときに使用できる。
+	 */
 	public Node getInnerNode()
 	{
 		return this.innerNode;
@@ -68,10 +96,10 @@ public class SubFrameNode extends Node{
 	protected void drawExtend(Graphics2D g2, Consumer<Graphics2D> action)
 	{
 		Shape s = g2.getClip();
-		g2.setClip(this.rect);
+		g2.setClip(this.shape);
 
-		g2.setColor(Color.LIGHT_GRAY);
-		g2.fill(this.rect);
+		g2.setColor(this.back);
+		g2.fill(this.shape);
 
 		action.accept(g2);
 
