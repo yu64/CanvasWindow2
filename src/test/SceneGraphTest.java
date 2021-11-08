@@ -1,5 +1,6 @@
 package test;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 
 import org.junit.Ignore;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import canvas2.debug.TextTree;
+import canvas2.view.scene.Drawable;
 import canvas2.view.scene.Node;
 
 class SceneGraphTest {
@@ -20,17 +22,33 @@ class SceneGraphTest {
 	private Node leafA2;
 	private Node leafB1;
 
+	private static class TestNode extends Node {
+
+		public TestNode(String name)
+		{
+			super(name);
+		}
+
+		@Override
+		protected Collection<Drawable> createCollection()
+		{
+			return new LinkedHashSet<>();
+		}
+	}
+
+
+
 	/* JUnit5のときは、@Before ではなく、@BeforeEach を使用する */
 
 	@BeforeEach
 	public void setup()
 	{
-		this.root = new Node(new LinkedHashSet<>(), "root");
-		this.groupA = new Node(new LinkedHashSet<>(), "groupA");
-		this.groupB = new Node(new LinkedHashSet<>(), "groupB");
-		this.leafA1 = new Node(new LinkedHashSet<>(), "leafA1");
-		this.leafA2 = new Node(new LinkedHashSet<>(), "leafA2");
-		this.leafB1 = new Node(new LinkedHashSet<>(), "leafB1");
+		this.root = new TestNode("root");
+		this.groupA = new TestNode("groupA");
+		this.groupB = new TestNode("groupB");
+		this.leafA1 = new TestNode("leafA1");
+		this.leafA2 = new TestNode("leafA2");
+		this.leafB1 = new TestNode("leafB1");
 
 	}
 

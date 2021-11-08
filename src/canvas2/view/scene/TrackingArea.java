@@ -11,23 +11,21 @@ import canvas2.view.AppWindow;
  * 指定の{@link Node}を指定の範囲に描画するクラス。<br>
  * {@link AppWindow}のルートノード配下に登録すること。
  */
-public class TrackingNode extends FrameNode{
+public class TrackingArea extends Area{
 
 	private Node targetNode;
 
-
-	public TrackingNode(String outer, String inner, Node targetNode)
+	public TrackingArea(String outer, String inner, Node targetNode)
 	{
 		super(outer, inner);
-
 		this.targetNode = targetNode;
 
 		this.getInnerNode().add(g2 -> {
 
 			this.targetNode.draw(g2);
 		});
-	}
 
+	}
 
 	/**
 	 * 指定座標を中心にします。
@@ -39,14 +37,13 @@ public class TrackingNode extends FrameNode{
 
 		if(isCenter)
 		{
-			Rectangle rect = this.getFrameShape().getBounds();
+			Rectangle rect = this.getShape().getBounds();
 			double centerX = rect.getCenterX();
 			double centerY = rect.getCenterY();
 
 			tx += centerX;
 			ty += centerY;
 		}
-
 
 		AffineTransform t = this.getInnerNode().getTransform();
 		TransformUtil.setTranslate(t, tx, ty);

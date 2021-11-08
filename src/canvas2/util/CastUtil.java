@@ -15,7 +15,15 @@ public class CastUtil {
 	@SuppressWarnings("unchecked")
 	public static <T, O> T cast(O obj)
 	{
-		return (T) obj;
+		try
+		{
+			return (T) obj;
+		}
+		catch(Exception e)
+		{
+			String msg = "Invalid cast: " + obj.getClass();
+			throw new RuntimeException(msg, e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

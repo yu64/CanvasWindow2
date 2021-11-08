@@ -2,6 +2,7 @@ package canvas2;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
@@ -21,7 +22,7 @@ import canvas2.value.file.test.TestObject1;
 import canvas2.value.file.test.TestObject2;
 import canvas2.value.file.test.TestReader2;
 import canvas2.view.scene.Node;
-import canvas2.view.scene.TrackingNode;
+import canvas2.view.scene.TrackingArea;
 
 public class MainTest {
 
@@ -264,8 +265,8 @@ public class MainTest {
 
 		loader.register(new TestReader2());
 
-		String path1 = "main/value/test/testFile1.txt";
-		String path2 = "main/value/test/testFile2.txt";
+		String path1 = "canvas2/value/file/test/testFile1.txt";
+		String path2 = "canvas2/value/file/test/testFile2.txt";
 
 		ReadTicket<TestObject1> ticket1 = loader.load(TestObject1.class, path1);
 		ReadTicket<TestObject1> ticket2 = loader.load(TestObject1.class, path1);
@@ -328,16 +329,25 @@ public class MainTest {
 
 	private static void testSubFrame(App app, Node area, Node overray, Point pos)
 	{
-		TrackingNode sub = new TrackingNode("subFrame", "sub", area);
+		TrackingArea sub = new TrackingArea("subFrame", "sub", area);
 		overray.add(sub);
 
-		sub.setFrameRect(200, 200);
+		Rectangle rect = new Rectangle(0, 0, 200, 200);
+
+		sub.setShape(rect);
 		sub.getTransform().translate(20, 20);
+		sub.setBackground(g2 -> {
+
+			g2.setColor(Color.LIGHT_GRAY);
+			g2.fill(rect);
+		});
 
 		app.getLogic().add(tpf -> {
 
 			sub.track(pos, true);
 		});
+
+
 	}
 
 }

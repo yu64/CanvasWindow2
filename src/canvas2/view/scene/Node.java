@@ -2,10 +2,9 @@ package canvas2.view.scene;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
 
 import canvas2.debug.TextTree;
 import canvas2.view.AppWindow;
@@ -18,25 +17,22 @@ import canvas2.view.AppWindow;
 public class Node implements Drawable, TextTree{
 
 	private Node parent = null;
-	private Set<Drawable> child;
+	private Collection<Drawable> child;
 	private String name;
 	private AffineTransform transform = new AffineTransform();
 
-	public Node()
-	{
-		this(new LinkedHashSet<>(), "node");
-	}
 
 	public Node(String name)
 	{
-		this(new LinkedHashSet<>(), name);
-	}
-
-	public Node(Set<Drawable> childSet, String name)
-	{
-		this.child = childSet;
+		this.child = this.createCollection();
 		this.name = name;
 	}
+
+	protected Collection<Drawable> createCollection()
+	{
+		return new LinkedHashSet<>();
+	}
+
 
 	public String getName()
 	{
@@ -155,10 +151,10 @@ public class Node implements Drawable, TextTree{
 
 		for(Drawable d : this.child)
 		{
-			if(d instanceof Node)
+			if(d instanceof TextTree)
 			{
-				Node node = (Node) d;
-				sb = node.createTreeText(sb, nest + 1);
+				TextTree t = (TextTree) d;
+				sb = t.createTreeText(sb, nest + 1);
 				continue;
 			}
 
@@ -178,21 +174,17 @@ public class Node implements Drawable, TextTree{
 		AffineTransform old = g2.getTransform();
 		g2.transform(this.transform);
 
-		this.drawExtend(g2, v -> {
-
-			for(Drawable d : this.child)
-			{
-				d.draw(v);
-			}
-
-		});
+		this.drawChild(g2);
 
 		g2.setTransform(old);
 	}
 
-	protected void drawExtend(Graphics2D g2, Consumer<Graphics2D> action)
+	protected void drawChild(Graphics2D g2)
 	{
-		action.accept(g2);
+		for(Drawable d : this.child)
+		{
+			d.draw(g2);
+		}
 	}
 
 

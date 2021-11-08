@@ -53,7 +53,7 @@ public class Flags<I> {
 
 		//存在するキーで、
 		//現在の値が設定される値と異なるとき、値を変更する。
-		if(b != null && b.equals(flag))
+		if(b != null && !b.equals(flag))
 		{
 			this.flag.put(id, flag);
 			this.trueCount += (flag ? 1 : -1);
