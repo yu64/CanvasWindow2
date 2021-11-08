@@ -2,7 +2,7 @@ package test;
 
 import java.util.concurrent.TimeUnit;
 
-import main.time.Clock;
+import canvas2.time.Clock;
 
 public class TestClock extends Clock{
 

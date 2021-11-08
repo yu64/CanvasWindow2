@@ -5,7 +5,7 @@ import java.util.function.LongSupplier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import main.time.TpfMeasurer;
+import canvas2.time.TpfMeasurer;
 
 class TpfTest {
 

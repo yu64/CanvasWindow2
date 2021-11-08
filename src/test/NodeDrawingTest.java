@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import main.view.scene.Drawable;
-import main.view.scene.Node;
+import canvas2.view.scene.Drawable;
+import canvas2.view.scene.Node;
 
 class NodeDrawingTest {
 

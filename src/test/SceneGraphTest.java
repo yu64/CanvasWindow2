@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import main.debug.TextTree;
-import main.view.scene.Node;
+import canvas2.debug.TextTree;
+import canvas2.view.scene.Node;
 
 class SceneGraphTest {
 
