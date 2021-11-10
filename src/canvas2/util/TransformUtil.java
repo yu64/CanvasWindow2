@@ -5,7 +5,7 @@ import java.awt.geom.AffineTransform;
 /**
  * {@link AffineTransform}の操作を簡略化するクラス。
  */
-public class TransformUtil {
+public final class TransformUtil {
 
 	private TransformUtil()
 	{

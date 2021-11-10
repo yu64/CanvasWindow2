@@ -95,21 +95,33 @@ public class App implements AutoCloseable, TextTree{
 		this.window.dispose();
 	}
 
+	/**
+	 * {@link AppWindow}のルートノード({@link Node})を取得。
+	 */
 	public Node getRootNode()
 	{
 		return this.root;
 	}
 
+	/**
+	 * {@link AppWindow}を取得。
+	 */
 	public AppWindow getWindow()
 	{
 		return this.window;
 	}
 
+	/**
+	 * {@link AppLogic}を取得。
+	 */
 	public AppLogic getLogic()
 	{
 		return this.logic;
 	}
 
+	/**
+	 * {@link EventManager}を取得。
+	 */
 	public EventManager getEventManager()
 	{
 		return this.event;

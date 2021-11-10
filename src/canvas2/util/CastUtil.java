@@ -5,7 +5,7 @@ package canvas2.util;
  * 警告つきのキャストをするクラス。
  *
  */
-public class CastUtil {
+public final class CastUtil {
 
 	private CastUtil()
 	{

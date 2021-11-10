@@ -1,9 +1,11 @@
 package canvas2.time;
 
+import canvas2.logic.AppLogic;
 import canvas2.logic.Updatable;
 
 /**
- * tickの値に基づいて、指定された処理を一定間隔で実行する。
+ * tickの値に基づいて、指定された処理を一定間隔で実行する。<br>
+ * {@link AppLogic}で更新させる必要がある。
  */
 public class TickInterval implements Updatable{
 

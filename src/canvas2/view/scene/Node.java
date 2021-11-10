@@ -11,8 +11,9 @@ import canvas2.view.AppWindow;
 
 /**
  * シーングラフのノードを示すクラス。<br>
- * 描画するときは、{@link AppWindow}のルートノードに登録する必要がある。
- *
+ * このノードを描画するときは、
+ * {@link AppWindow}のルートノードに登録する必要がある。<br>
+ * このノードの配下で描画するときは、このノードに登録する必要がある。
  */
 public class Node implements Drawable, TextTree{
 
