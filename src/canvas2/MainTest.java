@@ -28,6 +28,7 @@ public class MainTest {
 
 	public static void main(String[] args)
 	{
+		//最初に呼び出すべきもの。
 		App app = new App();
 		app.start();
 
