@@ -1,4 +1,4 @@
-package canvas2;
+package canvas2.sample;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -9,6 +9,7 @@ import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+import canvas2.App;
 import canvas2.debug.TextTree;
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtListener;
@@ -24,7 +25,7 @@ import canvas2.value.file.test.TestReader2;
 import canvas2.view.scene.Node;
 import canvas2.view.scene.TrackingArea;
 
-public class MainTest {
+public class MainSample2 {
 
 	public static void main(String[] args)
 	{
@@ -41,15 +42,15 @@ public class MainTest {
 		Node overray = new Node("overrayNode");
 		app.getRootNode().add(overray);
 
-		Point pos = MainTest.testMovedCircle(app, area);
-		MainTest.testAxis(app, area);
-		MainTest.testZoom(app, scroll);
-		MainTest.testMove(app, scroll);
-		MainTest.testColsed(app);
-		MainTest.testState(app, overray);
-		MainTest.testLoad(app, area);
-		MainTest.testMouse(app, area, scroll);
-		MainTest.testSubFrame(app, area, overray, pos);
+		Point pos = MainSample2.testMovedCircle(app, area);
+		MainSample2.testAxis(app, area);
+		MainSample2.testZoom(app, scroll);
+		MainSample2.testMove(app, scroll);
+		MainSample2.testColsed(app);
+		MainSample2.testState(app, overray);
+		//MainTest.testLoad(app, area);
+		MainSample2.testMouse(app, area, scroll);
+		MainSample2.testSubFrame(app, area, overray, pos);
 
 		System.out.println(TextTree.getText(app));
 

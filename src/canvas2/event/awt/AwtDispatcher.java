@@ -17,6 +17,7 @@ import canvas2.event.EventManager;
 public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 
 	private Map<Integer, Set<AwtListener>> action = new ConcurrentHashMap<>();
+	private Set<AwtListener> grobalListeners = new HashSet<>();
 
 	@Override
 	public Class<AWTEvent> getEventClass()
@@ -33,6 +34,13 @@ public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 	@Override
 	public void addListener(Object exId, AwtListener listener)
 	{
+		if(exId == null)
+		{
+			this.grobalListeners.add(listener);
+			return;
+		}
+
+
 		if( !(exId instanceof Integer))
 		{
 			return;
@@ -52,6 +60,12 @@ public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 	@Override
 	public void removeListener(Object exId, AwtListener listener)
 	{
+		if(exId == null)
+		{
+			this.grobalListeners.remove(listener);
+			return;
+		}
+
 		Set<AwtListener> set = this.action.get(exId);
 		if(set == null)
 		{
@@ -78,6 +92,17 @@ public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 	@Override
 	public void dispatch(float tpf, AWTEvent event)
 	{
+		try
+		{
+			for(AwtListener listener : this.grobalListeners)
+			{
+					listener.action(tpf, event);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
 		Set<AwtListener> set =  this.action.get(event.getID());
 		if(set == null)

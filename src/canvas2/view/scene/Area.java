@@ -2,6 +2,7 @@ package canvas2.view.scene;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 
 import canvas2.util.CastUtil;
 import canvas2.view.AppWindow;
@@ -42,6 +43,11 @@ public class Area extends Node {
 	public Node getInnerNode()
 	{
 		return this.inner;
+	}
+
+	public AffineTransform getInnerTransfrom()
+	{
+		return this.inner.getTransform();
 	}
 
 	public void setShape(Shape shape)

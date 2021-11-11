@@ -45,7 +45,10 @@ public class Node implements Drawable, TextTree{
 		return this.transform;
 	}
 
-
+	public Node getParent()
+	{
+		return this.parent;
+	}
 
 	public void setParent(Node parent)
 	{
@@ -201,6 +204,5 @@ public class Node implements Drawable, TextTree{
 
 		public void action(int nest, Drawable d);
 	}
-
 
 }

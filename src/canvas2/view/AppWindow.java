@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.swing.JFrame;
 
+import canvas2.debug.TextTree;
 import canvas2.logic.Updatable;
 import canvas2.view.scene.Drawable;
 import canvas2.view.scene.Node;
@@ -16,7 +17,7 @@ import canvas2.view.scene.Node;
  * 描画するために更新する必要がある。
  *
  */
-public class AppWindow extends JFrame implements Updatable{
+public class AppWindow extends JFrame implements Updatable, TextTree{
 
 	private JScreen screen;
 	private Node root;
@@ -68,6 +69,11 @@ public class AppWindow extends JFrame implements Updatable{
 		return new JScreen(obj);
 	}
 
+	public JScreen getScreen()
+	{
+		return this.screen;
+	}
+
 	public void setScreenSize(Dimension size)
 	{
 		this.screen.setPreferredSize(size);
@@ -88,6 +94,22 @@ public class AppWindow extends JFrame implements Updatable{
 	public void update(float tpf)
 	{
 		this.repaint();
+	}
+
+	@Override
+	public StringBuilder createTreeText(StringBuilder sb, int nest)
+	{
+		String e = System.lineSeparator();
+		String t0 = "\t".repeat(nest);
+
+		sb.append(t0);
+		sb.append(this.getClass().getSimpleName());
+		sb.append(e);
+
+		//this.createTreeText(sb, nest + 1);
+
+
+		return sb;
 	}
 
 

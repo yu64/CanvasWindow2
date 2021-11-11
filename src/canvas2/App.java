@@ -141,7 +141,7 @@ public class App implements AutoCloseable, TextTree{
 		this.event.createTreeText(sb, nest + 1);
 		this.root.createTreeText(sb, nest + 1);
 		this.logic.createTreeText(sb, nest + 1);
-
+		this.window.createTreeText(sb, nest + 1);
 
 		return sb;
 	}

@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import canvas2.view.scene.Drawable;
 
 /**
- * 指定され一つの描画物を描画するパネル。<br>
+ * 指定された一つの描画物を描画するパネル。<br>
  * {@link AppWindow}を改造するときに使用できる。
  *
  */
@@ -17,13 +17,20 @@ public class JScreen extends JPanel{
 
 
 	private Drawable obj;
+	private boolean isChildVisible = true;
+
 
 	public JScreen(Drawable obj)
 	{
-		Objects.requireNonNull(obj);
 
+		Objects.requireNonNull(obj);
 		this.obj = obj;
 
+	}
+
+	public void setChlidVisible(boolean b)
+	{
+		this.isChildVisible = b;
 	}
 
 	@Override
@@ -35,9 +42,16 @@ public class JScreen extends JPanel{
 
 		this.obj.draw(g2);
 
-
 		g2.dispose();
+	}
 
+	@Override
+	protected void paintChildren(Graphics g)
+	{
+		if(this.isChildVisible)
+		{
+			super.paintChildren(g);
+		}
 	}
 
 
@@ -46,4 +60,7 @@ public class JScreen extends JPanel{
 
 
 
+
+
 }
+

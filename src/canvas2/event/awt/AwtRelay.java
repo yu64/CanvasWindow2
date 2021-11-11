@@ -46,7 +46,7 @@ public class AwtRelay extends EventRelay implements AWTEventListener{
 		Component defaultComp = (Component) defaultSrc;
 		Component src = defaultComp;
 
-		if(!defaultComp.hasFocus())
+		if(event instanceof MouseEvent && defaultComp instanceof AppWindow)
 		{
 			KeyboardFocusManager m =  KeyboardFocusManager.getCurrentKeyboardFocusManager();
 			src = m.getFocusOwner();
