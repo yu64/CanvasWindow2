@@ -1,6 +1,8 @@
 package canvas2.util;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 
 /**
  * {@link AffineTransform}の操作を簡略化するクラス。
@@ -10,6 +12,18 @@ public final class TransformUtil {
 	private TransformUtil()
 	{
 
+	}
+
+	public static Point2D inverseTransform(AffineTransform t, Point2D in, Point2D out)
+	{
+		try
+		{
+			return t.inverseTransform(in, out);
+		}
+		catch (NoninvertibleTransformException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static void setTranslate(AffineTransform t, double x, double y)
@@ -50,7 +64,6 @@ public final class TransformUtil {
 
 
 		t.translate(moveX, moveY);
-
 	}
 
 }

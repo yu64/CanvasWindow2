@@ -25,7 +25,7 @@ public class JScreen extends JPanel{
 
 		Objects.requireNonNull(obj);
 		this.obj = obj;
-
+		this.setOpaque(false);
 	}
 
 	public void setChlidVisible(boolean b)

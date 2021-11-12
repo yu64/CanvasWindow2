@@ -17,7 +17,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 
 	private S now;
 	private Map<S, Map<S, Set<BooleanSupplier>>> table = new HashMap<>();
-	private Map<S, Runnable> action = new HashMap<>();
+	private Map<S, Updatable> action = new HashMap<>();
 
 
 	public StateTable(S initState)
@@ -49,7 +49,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		this.table.put(now, map);
 	}
 
-	public void register(S now, Runnable action)
+	public void register(S now, Updatable action)
 	{
 		this.action.put(now, action);
 	}
@@ -71,10 +71,17 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	public void update(float tpf)
 	{
 
-		Runnable action = this.action.get(this.now);
+		Updatable action = this.action.get(this.now);
 		if(action != null)
 		{
-			action.run();
+			try
+			{
+				action.update(tpf);
+			}
+			catch (Exception e1)
+			{
+				e1.printStackTrace();
+			}
 		}
 
 		Map<S, Set<BooleanSupplier>> map = this.table.get(this.now);
@@ -143,7 +150,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 
 		sb.append(tab2).append("[Action]").append(enter);
 
-		for(Entry<S, Runnable> e : this.action.entrySet())
+		for(Entry<S, Updatable> e : this.action.entrySet())
 		{
 			sb.append(tab3).append(e.getKey()).append(enter);
 			sb.append(tab4).append(e.getValue()).append(enter);
