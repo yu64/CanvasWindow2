@@ -1,14 +1,12 @@
 package canvas2.state;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.BooleanSupplier;
 
+import canvas2.core.Updatable;
 import canvas2.debug.TextTree;
-import canvas2.logic.Updatable;
 
 /**
  * 状態遷移表を示す。更新可能。
@@ -16,7 +14,8 @@ import canvas2.logic.Updatable;
 public class StateTable<S extends State> implements Updatable, TextTree{
 
 	private S now;
-	private Map<S, Map<S, Set<BooleanSupplier>>> table = new HashMap<>();
+	private Map<S, Map<S, BooleanSupplier>> table = new HashMap<>();
+	private Map<S, Map<S, Updatable>> change = new HashMap<>();
 	private Map<S, Updatable> action = new HashMap<>();
 
 
@@ -25,35 +24,56 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		this.now = initState;
 	}
 
+	protected <A, B> Map<A, B> createMap()
+	{
+		return new HashMap<>();
+	}
+
+
 	/**
 	 * 指定した状態かつ、指定した条件が真であるとき、<br>
-	 * 指定した次の状態に遷移することを登録する。
+	 * 次の指定した状態に遷移することを登録する。
 	 */
 	public void register(S now, S next, BooleanSupplier condition)
 	{
-		Map<S, Set<BooleanSupplier>> map = this.table.get(now);
+		Map<S, BooleanSupplier> map = this.table.get(now);
 		if(map == null)
 		{
-			map = new HashMap<>();
+			map = this.createMap();
 		}
 
-		Set<BooleanSupplier> set = map.get(next);
-		if(set == null)
-		{
-			set = new HashSet<>();
-		}
-
-		set.add(condition);
-
-		map.put(next, set);
+		map.put(next, condition);
 		this.table.put(now, map);
 	}
 
+	/**
+	 * 指定した状態である間、実行される処理を登録する。
+	 */
 	public void register(S now, Updatable action)
 	{
 		this.action.put(now, action);
 	}
 
+	/**
+	 * 指定した状態から、次の指定した状態に遷移したとき、
+	 * 処理することを登録する。
+	 */
+	public void register(S now, S next, Updatable condition)
+	{
+		Map<S, Updatable> map = this.change.get(now);
+		if(map == null)
+		{
+			map = this.createMap();
+		}
+
+		map.put(next, condition);
+		this.change.put(now, map);
+	}
+
+
+	/**
+	 * 現在の状態を取得する。
+	 */
 	public S getState()
 	{
 		return this.now;
@@ -71,6 +91,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	public void update(float tpf)
 	{
 
+		//状態に応じて常に更新
 		Updatable action = this.action.get(this.now);
 		if(action != null)
 		{
@@ -84,38 +105,45 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 			}
 		}
 
-		Map<S, Set<BooleanSupplier>> map = this.table.get(this.now);
+		Map<S, BooleanSupplier> map = this.table.get(this.now);
 		if(map == null)
 		{
 			return;
 		}
 
-		S next = null;
-		for(Entry<S, Set<BooleanSupplier>> e : map.entrySet())
+		Map<S, Updatable> change = this.change.get(this.now);
+
+
+		//状態遷移
+		for(Entry<S, BooleanSupplier> e : map.entrySet())
 		{
-			next = this.getNextState(e.getKey(), e.getValue());
-			if(next != null)
+			if(!e.getValue().getAsBoolean())
 			{
-				this.nextState(next);
-				return;
+				continue;
 			}
+
+			//遷移時の処理
+			if(change != null)
+			{
+				Updatable u = change.get(e.getKey());
+
+				try
+				{
+					u.update(tpf);
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+
+			//遷移
+			this.nextState(e.getKey());
+			return;
 		}
 
 	}
 
-
-	private S getNextState(S next, Set<BooleanSupplier> v)
-	{
-		for(BooleanSupplier b : v)
-		{
-			if(b.getAsBoolean())
-			{
-				return next;
-			}
-		}
-
-		return null;
-	}
 
 	@Override
 	public StringBuilder createTreeText(StringBuilder sb, int nest)
@@ -133,20 +161,19 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 
 		sb.append(tab2).append("[Transition]").append(enter);
 
-		for(Entry<S, Map<S, Set<BooleanSupplier>>> e1 : this.table.entrySet())
+		for(Entry<S, Map<S, BooleanSupplier>> e1 : this.table.entrySet())
 		{
 			sb.append(tab3).append(e1.getKey()).append(enter);
 
-			for(Entry<S, Set<BooleanSupplier>> e2 : e1.getValue().entrySet())
+			for(Entry<S, BooleanSupplier> e2 : e1.getValue().entrySet())
 			{
 				sb.append(tab4).append(e2.getKey()).append(enter);
+				sb.append(tab5).append(e2.getValue()).append(enter);
 
-				for(BooleanSupplier s : e2.getValue())
-				{
-					sb.append(tab5).append(s).append(enter);
-				}
 			}
 		}
+
+
 
 		sb.append(tab2).append("[Action]").append(enter);
 
@@ -156,7 +183,25 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 			sb.append(tab4).append(e.getValue()).append(enter);
 		}
 
+
+
+		sb.append(tab2).append("[Change]").append(enter);
+
+		for(Entry<S, Map<S, Updatable>> e1 : this.change.entrySet())
+		{
+			sb.append(tab3).append(e1.getKey()).append(enter);
+
+			for(Entry<S, Updatable> e2 : e1.getValue().entrySet())
+			{
+				sb.append(tab4).append(e2.getKey()).append(enter);
+				sb.append(tab5).append(e2.getValue()).append(enter);
+
+			}
+		}
+
 		sb.append(enter);
+
+
 
 		return sb;
 	}

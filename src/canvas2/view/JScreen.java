@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import javax.swing.JPanel;
 
-import canvas2.view.scene.Drawable;
+import canvas2.core.Drawable;
 
 /**
  * 指定された一つの描画物を描画するパネル。<br>

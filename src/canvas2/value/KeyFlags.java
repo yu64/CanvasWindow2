@@ -6,13 +6,16 @@ import java.util.Set;
 
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtListener;
-import canvas2.util.Flags;
+import canvas2.util.flag.BasicFlags;
 
 /**
  * キーを監視するクラス。
  *
  */
-public class KeyFlags extends Flags<Integer> implements AwtListener{
+public class KeyFlags extends BasicFlags<Integer> implements AwtListener{
+
+
+
 
 	/**
 	 * キーの種類を指定して作成。

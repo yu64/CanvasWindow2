@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
+import canvas2.core.Drawable;
 import canvas2.util.CastUtil;
 import canvas2.view.AppWindow;
 

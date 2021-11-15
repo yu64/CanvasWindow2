@@ -8,8 +8,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import canvas2.core.Updatable;
 import canvas2.debug.TextTree;
-import canvas2.logic.Updatable;
 import canvas2.util.CastUtil;
 
 /**

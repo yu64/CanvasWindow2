@@ -2,26 +2,20 @@ package canvas2.time;
 
 import java.util.concurrent.TimeUnit;
 
+import canvas2.core.Updatable;
 import canvas2.logic.AppLogic;
-import canvas2.logic.Updatable;
 
 /**
  * 現在の時間に基づいて、指定された処理を一定間隔で実行する。<br>
  * {@link AppLogic}で更新させる必要がある。
  */
-public class TimeInterval implements Updatable{
+public class TimeInterval extends Interval{
 
 	private Clock clock;
 	private long millTime;
-	private Updatable action;
 
 	//最終実行時間
 	private long prevTime = 0;
-
-	//経過時間のうち使われていない時間(次回に持ち越す時間)
-	private long unusedTotalTime = 0;
-
-
 
 	public TimeInterval(long ms, Updatable action)
 	{
@@ -35,9 +29,9 @@ public class TimeInterval implements Updatable{
 
 	public TimeInterval(Clock clock, long ms, Updatable action)
 	{
+		super(action);
 		this.clock = clock;
 		this.millTime = ms;
-		this.action = action;
 
 		this.prevTime = clock.getMillTime();
 	}
@@ -59,37 +53,33 @@ public class TimeInterval implements Updatable{
 	}
 
 
-
 	@Override
 	public void update(float tpf)
 	{
-		//経過時間を求める。
-		long mill = this.clock.getMillTime();
-		long diff = mill - this.prevTime;
+		long time = this.clock.getMillTime();
+		super.update(tpf);
 
-		//持ち越し分を考慮し、合計待機時間を求める。。
-		long totalTime = this.unusedTotalTime + diff;
-
-		//待機時間をもとに、実行できる回数、処理を実行する。
-		long count = totalTime / this.millTime;
-		for(int i = 0; i < count; i++)
-		{
-			try
-			{
-				this.action.update(tpf);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-
-		//余った待機時間を持ち越す。
-		this.unusedTotalTime = totalTime - this.millTime * count;
-
-		//経過時間を求めるために、最終実行時間を変更。
-		this.prevTime = mill;
+		this.prevTime = time;
 	}
+
+	@Override
+	protected double getElapsedTime(float tpf)
+	{
+		return this.clock.getMillTime() - this.prevTime;
+	}
+
+	@Override
+	protected int getExecutionCount(float tpf, double elapsed)
+	{
+		return (int) (elapsed / this.millTime);
+	}
+
+	@Override
+	protected double getCarryOver(float tpf, double elapsed, int count)
+	{
+		return elapsed - (this.millTime * count);
+	}
+
 
 
 

@@ -1,6 +1,7 @@
-package canvas2.util;
+package canvas2.util.flag;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -9,20 +10,21 @@ import java.util.Set;
  * フラグを管理するクラス。
  *
  */
-public class Flags<I> {
+public class BasicFlags<I> implements Flags<I>{
 
 
-	private Map<I, Boolean> flag = new HashMap<>();
+	private Map<I, Boolean> flag;
 	private int trueCount = 0;
 
 	/**
 	 * 識別子の種類を指定して作成。
 	 */
 	@SafeVarargs
-	public Flags(I... id)
+	public BasicFlags(I... id)
 	{
 		Objects.requireNonNull(id);
 
+		this.flag = this.createMap();
 		for(I s : id)
 		{
 			Objects.requireNonNull(s);
@@ -33,10 +35,11 @@ public class Flags<I> {
 	/**
 	 * 識別子の種類を指定して作成。
 	 */
-	public Flags(Set<I> id)
+	public BasicFlags(Set<I> id)
 	{
 		Objects.requireNonNull(id);
 
+		this.flag = this.createMap();
 		for(I s : id)
 		{
 			Objects.requireNonNull(s);
@@ -44,9 +47,14 @@ public class Flags<I> {
 		}
 	}
 
-	/**
-	 * キーの状態を示すフラグを変更する。
-	 */
+	protected Map<I, Boolean> createMap()
+	{
+		return new HashMap<>();
+	}
+
+
+
+
 	public void setFlag(I id, boolean flag, boolean canThrow)
 	{
 		Boolean b = this.flag.get(id);
@@ -67,25 +75,21 @@ public class Flags<I> {
 
 	}
 
-	/**
-	 * フラグを有効状態にする。
-	 */
+
+
 	public void enable(I id, boolean canThrow)
 	{
 		this.setFlag(id, true, canThrow);
 	}
 
-	/**
-	 * フラグを無効状態にする。
-	 */
 	public void disable(I id, boolean canThrow)
 	{
 		this.setFlag(id, false, canThrow);
 	}
 
-	/**
-	 * 指定した識別子のフラグが有効状態であるか
-	 */
+
+
+
 	public boolean isTrue(I id)
 	{
 		Boolean b = this.flag.get(id);
@@ -97,12 +101,16 @@ public class Flags<I> {
 		return b;
 	}
 
+	@Override
+	public boolean isFlase(I id)
+	{
+		return !this.isTrue(id);
+	}
 
-	private void throwNotFindKey(I id)
+	protected void throwNotFindKey(I id)
 	{
 		throw new RuntimeException("not find : " + id);
 	}
-
 
 
 	public int getAllCount()
@@ -129,6 +137,12 @@ public class Flags<I> {
 	public boolean isAllFalse()
 	{
 		return this.getFalseCount() == this.getAllCount();
+	}
+
+	@Override
+	public Iterator<I> iterator()
+	{
+		return this.flag.keySet().iterator();
 	}
 
 

@@ -1,6 +1,4 @@
-package canvas2.logic;
-
-import canvas2.AppObject;
+package canvas2.core;
 
 @FunctionalInterface
 public interface Updatable extends AppObject{

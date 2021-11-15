@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
-import canvas2.logic.Updatable;
+import canvas2.core.Updatable;
 
 public class JTransformPanel extends JScrollPane implements Updatable{
 

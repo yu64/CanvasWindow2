@@ -6,9 +6,9 @@ import java.util.Objects;
 
 import javax.swing.JFrame;
 
+import canvas2.core.Drawable;
+import canvas2.core.Updatable;
 import canvas2.debug.TextTree;
-import canvas2.logic.Updatable;
-import canvas2.view.scene.Drawable;
 import canvas2.view.scene.Node;
 
 /**

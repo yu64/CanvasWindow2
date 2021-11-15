@@ -8,7 +8,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import canvas2.logic.Updatable;
+import canvas2.core.Updatable;
 import canvas2.util.CastUtil;
 
 public class LoaderManager implements Updatable{
