@@ -47,7 +47,6 @@ public class Pool {
 		}
 
 		this.entrys.put(clazz, entry);
-		this.clear(this.entrys, clazz);
 	}
 
 	/**
@@ -94,21 +93,17 @@ public class Pool {
 	}
 
 
-
-
-
 	protected Map<Class<?>, PoolEntry<?>> createEntryMap()
 	{
 		return new HashMap<>();
 	}
 
 
-	protected <T> void clear(Map<Class<?>, ?> map, Class<?> clazz)
-	{
-		map.remove(clazz);
-	}
 
-
+	/**
+	 *
+	 * 一つのオブジェクトのプーリングを行うクラス。
+	 */
 	public static class PoolEntry<T> {
 
 		private Class<T> clazz;
@@ -118,7 +113,7 @@ public class Pool {
 		private Set<T> used;
 		private int limit;
 
-		protected PoolEntry(Class<T> clazz, Supplier<T> f, Consumer<T> init, int margin, int limit)
+		public PoolEntry(Class<T> clazz, Supplier<T> f, Consumer<T> init, int margin, int limit)
 		{
 			this.clazz = clazz;
 			this.factory = f;
@@ -134,14 +129,14 @@ public class Pool {
 			}
 		}
 
-		protected <T> Deque<T> createDeque()
+		protected Deque<T> createDeque()
 		{
-			return new ArrayDeque<T>();
+			return new ArrayDeque<>();
 		}
 
-		protected <T> Set<T> createSet()
+		protected Set<T> createSet()
 		{
-			return new HashSet<T>();
+			return new HashSet<>();
 		}
 
 		public Class<T> getType()
