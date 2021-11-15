@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import canvas2.util.Pool;
+import canvas2.util.Pool.PoolEntry;
 
 public class MainPoolTest {
 
@@ -32,13 +33,27 @@ public class MainPoolTest {
 				);
 
 
-		@SuppressWarnings("rawtypes")
-		ArrayList list = pool.obtain(ArrayList.class);
-		list.add(new Object());
-		list.add(new Object());
+		PoolEntry<ArrayList<Object>> entry = pool.getEntry();
 
+		System.out.println("obtain ArrayList");
+
+		ArrayList<String> list = pool.obtain();
+
+		System.out.println("used " + entry.getUsedSize());
+		System.out.println("unused " + entry.getUnusedSize());
+
+
+		System.out.println("use");
+		System.out.println(list);
+		list.add("code1");
+		list.add("code2");
+		System.out.println(list);
+
+		System.out.println("free");
 		pool.free(list);
 
+		System.out.println("used " + entry.getUsedSize());
+		System.out.println("unused " + entry.getUnusedSize());
 
 
 		long startTime = System.nanoTime();

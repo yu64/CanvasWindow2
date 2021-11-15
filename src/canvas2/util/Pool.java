@@ -2,9 +2,10 @@ package canvas2.util;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -50,6 +51,13 @@ public class Pool {
 		this.entrys.put(clazz, entry);
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T> T obtain(T... empty)
+	{
+		Class<T> clazz = CastUtil.getComponentClass(empty);
+		return this.obtain(clazz);
+	}
+
 	/**
 	 * プーリングされたオブジェクトを取得する。
 	 */
@@ -86,6 +94,13 @@ public class Pool {
 	public <T> AutoCloseable getReleaseCloseable(T obj)
 	{
 		return () -> this.free(obj);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> PoolEntry<T> getEntry(T... empty)
+	{
+		Class<T> clazz = CastUtil.getComponentClass(empty);
+		return this.getEntry(clazz);
 	}
 
 	public <T> PoolEntry<T> getEntry(Class<T> clazz)
@@ -137,7 +152,7 @@ public class Pool {
 
 		protected Set<T> createSet()
 		{
-			return new HashSet<>();
+			return Collections.newSetFromMap(new IdentityHashMap<T, Boolean>());
 		}
 
 		public Class<T> getType()
@@ -172,7 +187,7 @@ public class Pool {
 				throw new RuntimeException("It is free. Exist unused flag. " + name);
 			}
 
-			this.used.remove(obj);
+			this.removeFromUsed(obj);
 
 			if(!this.isFull())
 			{
@@ -207,6 +222,26 @@ public class Pool {
 			}
 
 			return false;
+		}
+
+		protected boolean removeFromUsed(T obj)
+		{
+			if(this.used.remove(obj))
+			{
+				return true;
+			}
+
+			T key = obj;
+			for(T o : this.used)
+			{
+				if(o == obj)
+				{
+					key = o;
+					break;
+				}
+			}
+
+			return this.used.remove(key);
 		}
 
 		public String toStringUsed()

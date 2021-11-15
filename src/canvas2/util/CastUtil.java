@@ -38,4 +38,11 @@ public final class CastUtil {
 		return (T[]) new Object[i];
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T> getComponentClass(T... empty)
+	{
+		Class<?> clazz = empty.getClass();
+		return (Class<T>) clazz.getComponentType();
+	}
+
 }
