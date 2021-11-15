@@ -1,5 +1,6 @@
 package canvas2.sample;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +11,7 @@ import canvas2.util.Pool;
 
 public class MainPoolTest {
 
-
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args)
 	{
 		Pool pool = new Pool();
@@ -21,6 +22,24 @@ public class MainPoolTest {
 				0,
 				10
 				);
+
+		pool.register(
+				ArrayList.class,
+				ArrayList::new,
+				v -> v.clear(),
+				1,
+				1
+				);
+
+
+		@SuppressWarnings("rawtypes")
+		ArrayList list = pool.obtain(ArrayList.class);
+		list.add(new Object());
+		list.add(new Object());
+
+		pool.free(list);
+
+
 
 		long startTime = System.nanoTime();
 

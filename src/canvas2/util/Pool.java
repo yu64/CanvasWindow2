@@ -1,6 +1,7 @@
 package canvas2.util;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -161,12 +162,12 @@ public class Pool {
 		public void free(T obj)
 		{
 			String name = obj.getClass().getSimpleName();
-			if(!this.used.contains(obj))
+			if(!this.containsUsed(obj))
 			{
 				throw new RuntimeException("It is free. Not exist used flag. " + name);
 			}
 
-			if(this.unused.contains(obj))
+			if(this.containsUnused(obj))
 			{
 				throw new RuntimeException("It is free. Exist unused flag. " + name);
 			}
@@ -178,6 +179,34 @@ public class Pool {
 				this.initializer.accept(obj);
 				this.unused.addLast(obj);
 			}
+		}
+
+		public boolean containsUsed(T obj)
+		{
+			return this.contains(this.used, obj);
+		}
+
+		public boolean containsUnused(T obj)
+		{
+			return this.contains(this.unused, obj);
+		}
+
+		protected boolean contains(Collection<T> c, T obj)
+		{
+			if(c.contains(obj))
+			{
+				return true;
+			}
+
+			for(T o : c)
+			{
+				if(o == obj)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public String toStringUsed()
