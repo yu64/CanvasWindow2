@@ -18,7 +18,8 @@ public class MainPoolTest {
 				Heavy.class,
 				Heavy::new,
 				v -> {},
-				0
+				0,
+				10
 				);
 
 		long startTime = System.nanoTime();

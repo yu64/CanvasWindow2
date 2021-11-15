@@ -32,7 +32,8 @@ public class MainSample3 {
 				Entity.class,
 				Entity::new,
 				o -> o.reset(),
-				1
+				1,
+				Integer.MAX_VALUE
 				);
 
 

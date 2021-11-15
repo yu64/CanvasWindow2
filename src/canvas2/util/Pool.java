@@ -1,7 +1,6 @@
 package canvas2.util;
 
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +9,10 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * オブジェクトプーリングの機能を提供する。
+ *
+ */
 public class Pool {
 
 	public Map<Class<?>, PoolEntry<?>> entrys;
@@ -21,17 +24,35 @@ public class Pool {
 		this.entrys = this.createEntryMap();
 	}
 
-	public <T> void register(Class<T> clazz, Supplier<T> f, Consumer<T> r, int initUnusedCount)
+	/**
+	 * プーリングするクラスを登録する。
+	 *
+	 * @param clazz 対象のクラス<br>
+	 * @param f オブジェクトの生成方法<br>
+	 * @param r 初期化方法<br>
+	 * @param margin 初期プーリング量<br>
+	 * @param limit プールの最大容量<br>
+	 */
+	public <T> void register(Class<T> clazz, Supplier<T> f, Consumer<T> r, int margin, int limit)
 	{
-		PoolEntry<T> e = new PoolEntry<>(clazz, f, r);
-		this.entrys.put(clazz, e);
-
-		for(int i = 0; i < initUnusedCount; i++)
-		{
-			e.addMargin();
-		}
+		PoolEntry<T> e = new PoolEntry<>(clazz, f, r, margin, limit);
+		this.register(clazz, e);
 	}
 
+	public <T> void register(Class<T> clazz, PoolEntry<T> entry)
+	{
+		if(this.entrys.containsKey(clazz))
+		{
+			throw new RuntimeException("Entry is exist. " + clazz);
+		}
+
+		this.entrys.put(clazz, entry);
+		this.clear(this.entrys, clazz);
+	}
+
+	/**
+	 * プーリングされたオブジェクトを取得する。
+	 */
 	public <T> T obtain(Class<T> clazz)
 	{
 		PoolEntry<T> e = CastUtil.cast(this.entrys.get(clazz));
@@ -43,6 +64,9 @@ public class Pool {
 		return e.obtain();
 	}
 
+	/**
+	 * オブジェクトを解放する。
+	 */
 	public <T> void free(T obj)
 	{
 		Class<T> clazz = CastUtil.getClass(obj);
@@ -55,7 +79,11 @@ public class Pool {
 		e.free(obj);
 	}
 
-	public <T> AutoCloseable closeable(T obj)
+	/**
+	 * closeするとオブジェクトを解放する{@link AutoCloseable}を作成する。
+	 *
+	 */
+	public <T> AutoCloseable getReleaseCloseable(T obj)
 	{
 		return () -> this.free(obj);
 	}
@@ -66,15 +94,8 @@ public class Pool {
 	}
 
 
-	protected <T> Deque<T> createDeque()
-	{
-		return new ArrayDeque<T>();
-	}
 
-	protected <T> Set<T> createSet()
-	{
-		return new HashSet<T>();
-	}
+
 
 	protected Map<Class<?>, PoolEntry<?>> createEntryMap()
 	{
@@ -82,28 +103,45 @@ public class Pool {
 	}
 
 
-	protected <T, C extends Collection<?>> void clear(Map<Class<?>, C> map, Class<?> clazz)
+	protected <T> void clear(Map<Class<?>, ?> map, Class<?> clazz)
 	{
 		map.remove(clazz);
 	}
 
 
-	public class PoolEntry<T> {
+	public static class PoolEntry<T> {
 
 		private Class<T> clazz;
 		private Supplier<T> factory;
 		private Consumer<T> initializer;
 		private Deque<T> unused;
 		private Set<T> used;
+		private int limit;
 
-		protected PoolEntry(Class<T> clazz, Supplier<T> f, Consumer<T> init)
+		protected PoolEntry(Class<T> clazz, Supplier<T> f, Consumer<T> init, int margin, int limit)
 		{
 			this.clazz = clazz;
 			this.factory = f;
 			this.initializer = init;
+			this.limit = limit;
 
-			this.unused = Pool.this.createDeque();
-			this.used = Pool.this.createSet();
+			this.unused = this.createDeque();
+			this.used = this.createSet();
+
+			for(int i = 0; i < margin; i++)
+			{
+				this.addMargin();
+			}
+		}
+
+		protected <T> Deque<T> createDeque()
+		{
+			return new ArrayDeque<T>();
+		}
+
+		protected <T> Set<T> createSet()
+		{
+			return new HashSet<T>();
 		}
 
 		public Class<T> getType()
@@ -127,22 +165,89 @@ public class Pool {
 
 		public void free(T obj)
 		{
+			String name = obj.getClass().getSimpleName();
 			if(!this.used.contains(obj))
 			{
-				throw new RuntimeException("It is free." + obj);
+				throw new RuntimeException("It is free. Not exist used flag. " + name);
 			}
 
 			if(this.unused.contains(obj))
 			{
-				throw new RuntimeException("It is free." + obj);
+				throw new RuntimeException("It is free. Exist unused flag. " + name);
 			}
 
 			this.used.remove(obj);
-			this.unused.addLast(obj);
+
+			if(!this.isFull())
+			{
+				this.initializer.accept(obj);
+				this.unused.addLast(obj);
+			}
+		}
+
+		public String toStringUsed()
+		{
+			return this.used.toString();
+		}
+
+		public String toStringUnused()
+		{
+			return this.unused.toString();
+		}
+
+
+		public int getUsedSize()
+		{
+			return this.used.size();
+		}
+
+		public int getUnusedSize()
+		{
+			return this.unused.size();
+		}
+
+		public void clearUsed(Consumer<T> closeFun)
+		{
+			for(T obj : this.used)
+			{
+				closeFun.accept(obj);
+			}
+
+			this.used.clear();
+		}
+
+		public void clearUnused(Consumer<T> closeFun)
+		{
+			for(T obj : this.unused)
+			{
+				closeFun.accept(obj);
+			}
+
+			this.unused.clear();
+		}
+
+		public int getSize()
+		{
+			return this.getUsedSize() + this.getUnusedSize();
+		}
+
+		public int getLimit()
+		{
+			return this.limit;
+		}
+
+		public boolean isFull()
+		{
+			return this.limit <= this.getSize();
 		}
 
 		protected void addMargin()
 		{
+			if(this.isFull())
+			{
+				return;
+			}
+
 			T obj = this.factory.get();
 			this.initializer.accept(obj);
 			this.unused.addLast(obj);
