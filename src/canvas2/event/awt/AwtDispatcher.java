@@ -1,52 +1,43 @@
 package canvas2.event.awt;
 
 import java.awt.AWTEvent;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-import canvas2.event.Dispatcher;
-import canvas2.event.EventManager;
+import canvas2.event.Listener;
+import canvas2.event.basic.BasicDispatcher;
 
-/**
- * {@link EventManager}からきたAWTEventをリスナーに分配するクラス。<br>
- * {@link EventManager}に登録する必要がある。
- */
-public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
+public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 
-	private Map<Integer, Set<AwtListener>> action = new ConcurrentHashMap<>();
-	private Set<AwtListener> grobalListeners = new HashSet<>();
 
-	@Override
-	public Class<AWTEvent> getEventClass()
+	private Map<Integer, Set<Listener<AWTEvent>>> local;
+
+	public AwtDispatcher()
 	{
-		return AWTEvent.class;
+		super(AWTEvent.class);
+		this.local = this.createMap();
 	}
 
-	@Override
-	public Class<AwtListener> getListenerClass()
+	protected <K, V> Map<K, V> createMap()
 	{
-		return AwtListener.class;
+		return new HashMap<>();
 	}
 
-	@Override
-	public void addListener(Object exId, AwtListener listener)
-	{
-		if(exId == null)
-		{
-			this.grobalListeners.add(listener);
-			return;
-		}
 
+	@Override
+	public void addListener(Object exId, Listener<AWTEvent> listener)
+	{
+		super.addListener(exId, listener);
 
 		if( !(exId instanceof Integer))
 		{
 			return;
 		}
 
-		Set<AwtListener> set = this.action.get(exId);
+		Set<Listener<AWTEvent>> set = this.local.get(exId);
 		if(set == null)
 		{
 			set = new HashSet<>();
@@ -54,19 +45,20 @@ public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 
 		set.add(listener);
 
-		this.action.put((Integer)exId, set);
+		this.local.put((Integer)exId, set);
 	}
 
 	@Override
-	public void removeListener(Object exId, AwtListener listener)
+	public void removeListener(Object exId, Listener<AWTEvent> listener)
 	{
-		if(exId == null)
+		super.removeListener(exId, listener);
+
+		if( !(exId instanceof Integer))
 		{
-			this.grobalListeners.remove(listener);
 			return;
 		}
 
-		Set<AwtListener> set = this.action.get(exId);
+		Set<Listener<AWTEvent>> set = this.local.get(exId);
 		if(set == null)
 		{
 			return;
@@ -74,80 +66,66 @@ public class AwtDispatcher implements Dispatcher<AWTEvent, AwtListener>{
 
 		set.remove(listener);
 
-		if(set.isEmpty())
-		{
-			return;
-		}
-
-		this.action.put((Integer)exId, set);
+		this.local.put((Integer)exId, set);
 	}
 
 	@Override
 	public void clearListener()
 	{
-		this.action.clear();
+		super.clearListener();
+		this.local.clear();
 	}
-
 
 	@Override
 	public void dispatch(float tpf, AWTEvent event)
 	{
-		try
-		{
-			for(AwtListener listener : this.grobalListeners)
-			{
-					listener.action(tpf, event);
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		super.dispatch(tpf, event);
 
-		Set<AwtListener> set =  this.action.get(event.getID());
+		Set<Listener<AWTEvent>> set = this.local.get(event.getID());
 		if(set == null)
 		{
 			return;
 		}
 
-		try
+		for(Listener<AWTEvent> h : set)
 		{
-			for(AwtListener listener : set)
-			{
-				listener.action(tpf, event);
-			}
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
+			h.actAndThrow(tpf, event);
 		}
 	}
-
 
 	@Override
 	public StringBuilder createTreeText(StringBuilder sb, int nest)
 	{
+
+
 		String enter = System.lineSeparator();
 		String tab1 = "\t".repeat(nest);
 		String tab2 = tab1 + "\t";
-		String title = this.getClass().getSimpleName();
+		String tab3 = tab1 + "\t\t";
+		String tab4 = tab1 + "\t\t\t";
 
+		String title = this.getClass().getSimpleName();
 		sb.append(tab1).append(title).append(enter);
 
-		for(Entry<Integer, Set<AwtListener>> e : this.action.entrySet())
+
+		sb.append(tab2).append("[Global]").append(enter);
+		for(Listener<AWTEvent> h : this.getListeners())
 		{
-			sb.append(tab2).append(e.getKey()).append(enter);
+			sb.append(tab3).append(h).append(enter);
+		}
 
-			String tab3 = tab2 + "\t";
-			for(AwtListener listener : e.getValue())
+		sb.append(tab2).append("[Local]").append(enter);
+		for(Entry<Integer, Set<Listener<AWTEvent>>> e : this.local.entrySet())
+		{
+			sb.append(tab3).append(e.getKey()).append(enter);
+
+			for(Listener<AWTEvent> h : e.getValue())
 			{
-				sb.append(tab3).append(listener).append(enter);
+				sb.append(tab4).append(h).append(enter);
 			}
-
 		}
 
 		return sb;
 	}
-
 
 }

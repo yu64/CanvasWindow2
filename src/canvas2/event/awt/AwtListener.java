@@ -1,12 +1,16 @@
 package canvas2.event.awt;
 
 import java.awt.AWTEvent;
-import java.util.EventListener;
+
+import canvas2.event.Listener;
 
 /** float tpf, AWTEvent e **/
-public interface AwtListener extends EventListener{
+public interface AwtListener extends Listener<AWTEvent>{
 
 
-	public void action(float tpf, AWTEvent e) throws Exception;
+	public void act(float tpf, AWTEvent e) throws Exception;
+
+
+
 
 }

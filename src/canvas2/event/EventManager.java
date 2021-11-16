@@ -1,227 +1,194 @@
 package canvas2.event;
 
-import java.util.EventListener;
+import java.util.ArrayDeque;
 import java.util.EventObject;
 import java.util.HashSet;
-import java.util.Objects;
+import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
+import canvas2.core.Trigger;
 import canvas2.core.Updatable;
 import canvas2.debug.TextTree;
+import canvas2.event.basic.BasicDispatcher;
 import canvas2.util.CastUtil;
 
-/**
- * イベントを管理する。<br>
- * (IDと)リスナーを登録すると、対応するイベントに紐づけられる。<br>
- * 発火したイベントは、キューに入れられる。<br>
- * イベントの発火のために更新する必要がある。<br>
- *
- */
-public class EventManager implements Updatable, TextTree {
+public class EventManager implements Updatable, TextTree{
 
-	private DispatcherMap dispatcher;
-	private Set<EventRelay> relay;
-	private Queue<EventObject> eventQueue = new ConcurrentLinkedQueue<>();
+	private Queue<EventObject> queue;
+	private Set<Dispatcher<?>> dispatchers = new HashSet<>();
+
 
 	public EventManager()
 	{
-		this(
-				new DispatcherMap(),
-				new HashSet<EventRelay>()
-				);
-	}
-
-	public EventManager(DispatcherMap map, Set<EventRelay> relay)
-	{
-		this.dispatcher = map;
-		this.relay = relay;
+		this.queue = this.createQueue();
 	}
 
 
-
-
-	public void addDispatcher(Dispatcher<?, ?> d)
+	protected Queue<EventObject> createQueue()
 	{
-		this.dispatcher.addDispatcher(d);
+		return new ArrayDeque<>();
 	}
 
-	public void removeDispatcher(Dispatcher<?, ?> d)
+	protected <T> Set<T> createSet()
 	{
-		this.dispatcher.removeDispatcher(d);
-	}
-
-	public void clearDispatcher()
-	{
-		this.dispatcher.removeAllDispatcher();
-	}
-
-	public <D extends Dispatcher<?, ?>> D getDispatcher(Class<D> clazz)
-	{
-		D obj = this.dispatcher.get(clazz);
-		Objects.requireNonNull(obj, "Dispatcher not find ");
-
-		return obj;
+		return new HashSet<>();
 	}
 
 
-
-	public void addRelay(EventRelay relay)
+	public <E extends EventObject> void setDispatcher(Class<E> e, Dispatcher<E> in)
 	{
-		if(!relay.isColsed())
+		Iterator<Dispatcher<?>> ite = this.dispatchers.iterator();
+		while(ite.hasNext())
 		{
-			throw new RuntimeException("Already initialized");
+			Dispatcher<?> d = ite.next();
+			if(!d.getEventClass().isAssignableFrom(e))
+			{
+				continue;
+			}
+
+			ite.remove();
 		}
 
-		this.relay.add(relay);
-		relay.init(this);
+		this.dispatchers.add(in);
 	}
 
-	public void removeRelay(EventRelay relay)
+
+
+
+	public <E extends EventObject> void add(Class<E> e, Listener<E> listener)
 	{
-		if(relay.isColsed())
+		this.add(e, null, listener);
+	}
+
+	public <E extends EventObject> void add(Class<E> e, Object exId, Listener<E> listener)
+	{
+		boolean isAdded = false;
+		for(Dispatcher<?> d : this.dispatchers)
 		{
-			throw new RuntimeException("Already closed");
+			if(!d.getEventClass().isAssignableFrom(e))
+			{
+				continue;
+			}
+
+			Dispatcher<E> d2 = CastUtil.cast(d);
+			d2.addListener(exId, listener);
+			isAdded = true;
 		}
 
-		relay.close();
-		this.relay.remove(relay);
-	}
-
-	public void clearRelay()
-	{
-		for(EventRelay relay : this.relay)
+		if(isAdded)
 		{
-			this.removeRelay(relay);
+			return;
 		}
-	}
 
+		Dispatcher<E> d = new BasicDispatcher<E>(e);
+		d.addListener(exId, listener);
 
-	public <L extends EventListener> void add(L listener)
-	{
-		this.add((Object)null, listener);
-	}
-
-	public <L extends EventListener> void add(Object exId, L listener)
-	{
-		Class<L> clazz = CastUtil.getClass(listener);
-		this.add(clazz, exId, listener);
-	}
-
-	public <L extends EventListener> void add(Class<L> listenerClass, L listener)
-	{
-		this.add(listenerClass, null, listener);
-	}
-
-	public <L extends EventListener> void add(Class<L> listenerClass, Object exId, L listener)
-	{
-		Class<L> clazz = listenerClass;
-
-		this.dispatcher.forEachListener(clazz, d -> {
-
-			d.addListener(exId, listener);
-		});
+		this.dispatchers.add(d);
 	}
 
 
 
-	public <L extends EventListener> void remove(L listener)
+	public <E extends EventObject> void remove(Class<E> e, Listener<E> listener)
 	{
-		this.remove((Object)null, listener);
+		this.add(e, null, listener);
 	}
 
-	public <L extends EventListener> void remove(Object exId, L listener)
+	public <E extends EventObject> void remove(Class<E> e, Object exId, Listener<E> listener)
 	{
-		Class<L> clazz = CastUtil.getClass(listener);
-		this.remove(clazz, exId, listener);
-	}
+		Iterator<Dispatcher<?>> ite = this.dispatchers.iterator();
+		while(ite.hasNext())
+		{
+			Dispatcher<?> d = ite.next();
+			if(!d.getEventClass().isAssignableFrom(e))
+			{
+				continue;
+			}
 
-	public <L extends EventListener> void remove(Class<L> listenerClass, L listener)
-	{
-		this.remove(listenerClass, null, listener);
-	}
+			Dispatcher<E> d2 = CastUtil.cast(d);
+			d2.removeListener(exId, listener);
+		}
 
-	public <L extends EventListener> void remove(Class<L> listenerClass, Object exId, L listener)
-	{
-		Class<L> clazz = listenerClass;
-
-		this.dispatcher.forEachListener(clazz, d -> {
-
-			d.removeListener(exId, listener);
-		});
 	}
 
 
-
-
-
-	public void clearListener()
+	public void clear()
 	{
-		this.dispatcher.forEach(d -> {
-
-			d.clearListener();
-		});
+		this.dispatchers.clear();
 	}
 
 
-
-
-
-	public <E extends EventObject> void dispatch(E event)
+	public void dispatch(EventObject e)
 	{
-		this.eventQueue.add(event);
+		this.queue.add(e);
 	}
 
 	@Override
 	public void update(float tpf) throws Exception
 	{
-		while(!this.eventQueue.isEmpty())
+		while(!this.queue.isEmpty())
 		{
-			EventObject event = this.eventQueue.poll();
-			this.invokeDispatcher(tpf, event);
+			EventObject e = this.queue.poll();
+			this.invokeListener(tpf, e);
 		}
 	}
 
-	private <E extends EventObject> void invokeDispatcher(float tpf, E event)
+	public <E extends EventObject> void invokeListener(float tpf, E e)
 	{
-		Class<E> clazz = CastUtil.getClass(event);
+		Class<?> clazz = e.getClass();
+		for(Dispatcher<?> d : this.dispatchers)
+		{
+			if(!d.getEventClass().isAssignableFrom(clazz))
+			{
+				continue;
+			}
 
-		this.dispatcher.forEachEvent(clazz, d -> {
-
-			d.dispatch(tpf, event);
-		});
+			Dispatcher<E> d2 = CastUtil.cast(d);
+			d2.dispatch(tpf, e);
+		}
 	}
 
+
+
+	public Trigger createTrigger()
+	{
+		return new TriggerImpl();
+	}
+
+	protected class TriggerImpl implements Trigger
+	{
+
+		protected TriggerImpl()
+		{
+
+		}
+
+		public void dispatch(EventObject o)
+		{
+			this.dispatch(o);
+		}
+	}
 
 	@Override
 	public StringBuilder createTreeText(StringBuilder sb, int nest)
 	{
 		String enter = System.lineSeparator();
-		String tab1 = "\t".repeat(nest);
+		String tab0 = "\t".repeat(nest);
 
 		String title = this.getClass().getSimpleName();
 
-		sb.append(tab1).append(title).append(enter);
-		sb = this.dispatcher.createTreeText(sb, nest + 1);
+		sb.append(tab0);
+		sb.append(title);
 		sb.append(enter);
 
-		String tab2 = tab1 + "\t";
-		String relayTitle = this.relay.getClass().toGenericString();
-		sb.append(tab2).append(relayTitle).append(enter);
-
-		String tab3 = tab2 + "\t";
-		for(EventRelay relay : this.relay)
+		for(Dispatcher<?> d : this.dispatchers)
 		{
-			sb.append(tab3).append(relay).append(enter);
+			d.createTreeText(sb, nest + 1);
 		}
+
 
 		return sb;
 	}
-
-
-
-
 
 
 

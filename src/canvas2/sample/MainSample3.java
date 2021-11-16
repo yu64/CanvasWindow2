@@ -1,5 +1,6 @@
 package canvas2.sample;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
@@ -12,7 +13,6 @@ import java.util.Deque;
 
 import canvas2.App;
 import canvas2.event.EventManager;
-import canvas2.event.awt.AwtListener;
 import canvas2.logic.AppLogic;
 import canvas2.util.Pool;
 import canvas2.view.scene.Node;
@@ -127,12 +127,12 @@ public class MainSample3 {
 
 
 		EventManager event = app.getEventManager();
-		event.add(AwtListener.class, WindowEvent.WINDOW_CLOSED, (tpf, awt) -> {
+		event.add(AWTEvent.class, WindowEvent.WINDOW_CLOSED, (tpf, awt) -> {
 
 			app.close();
 		});
 
-		event.add(AwtListener.class, MouseEvent.MOUSE_RELEASED, (tpf, awt) -> {
+		event.add(AWTEvent.class, MouseEvent.MOUSE_RELEASED, (tpf, awt) -> {
 
 			if( !(awt instanceof MouseEvent) )
 			{
@@ -153,7 +153,7 @@ public class MainSample3 {
 
 		});
 
-		event.add(AwtListener.class, MouseEvent.MOUSE_MOVED, (tpf, awt) -> {
+		event.add(AWTEvent.class, MouseEvent.MOUSE_MOVED, (tpf, awt) -> {
 
 			if( !(awt instanceof MouseEvent) )
 			{
@@ -164,7 +164,7 @@ public class MainSample3 {
 			mouse.setLocation(e.getPoint());
 		});
 
-		event.add(AwtListener.class, MouseWheelEvent.MOUSE_WHEEL, (tpf, awt) -> {
+		event.add(AWTEvent.class, MouseWheelEvent.MOUSE_WHEEL, (tpf, awt) -> {
 
 			if( !(awt instanceof MouseWheelEvent) )
 			{

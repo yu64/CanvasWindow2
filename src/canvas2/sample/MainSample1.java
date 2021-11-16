@@ -1,5 +1,6 @@
 package canvas2.sample;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
@@ -7,7 +8,6 @@ import java.util.Set;
 
 import canvas2.App;
 import canvas2.event.EventManager;
-import canvas2.event.awt.AwtListener;
 import canvas2.util.TransformUtil;
 import canvas2.value.KeyFlags;
 import canvas2.view.scene.Node;
@@ -63,7 +63,7 @@ public class MainSample1 {
 		});
 
 		EventManager event = app.getEventManager();
-		event.add(AwtListener.class, KeyEvent.KEY_RELEASED, (tpf, v) -> {
+		event.add(AWTEvent.class, KeyEvent.KEY_RELEASED, (tpf, v) -> {
 
 			KeyEvent e = (KeyEvent) v;
 

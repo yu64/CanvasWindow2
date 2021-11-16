@@ -1,5 +1,6 @@
 package canvas2.sample;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -121,7 +122,7 @@ public class MainSample2 {
 		});
 
 		EventManager event = app.getEventManager();
-		event.add(AwtListener.class, KeyEvent.KEY_RELEASED, (tpf, v) -> {
+		event.add(AWTEvent.class, KeyEvent.KEY_RELEASED, (tpf, v) -> {
 
 			KeyEvent e = (KeyEvent) v;
 
@@ -194,7 +195,7 @@ public class MainSample2 {
 		EventManager event = app.getEventManager();
 
 		//エスケープキーで終了。
-		event.add(AwtListener.class, KeyEvent.KEY_PRESSED, (t, v) -> {
+		event.add(AWTEvent.class, KeyEvent.KEY_PRESSED, (t, v) -> {
 
 			KeyEvent e = (KeyEvent) v;
 
@@ -205,7 +206,7 @@ public class MainSample2 {
 		});
 
 		//ウィンドウを閉じたら、終了。
-		event.add(AwtListener.class, WindowEvent.WINDOW_CLOSING, (t, v) -> {
+		event.add(AWTEvent.class, WindowEvent.WINDOW_CLOSING, (t, v) -> {
 
 			app.close();
 		});
@@ -316,9 +317,9 @@ public class MainSample2 {
 
 		};
 
-		event.add(MouseEvent.MOUSE_DRAGGED, action);
-		event.add(MouseEvent.MOUSE_PRESSED, action);
-		event.add(MouseEvent.MOUSE_RELEASED, action);
+		event.add(AWTEvent.class, MouseEvent.MOUSE_DRAGGED, action);
+		event.add(AWTEvent.class, MouseEvent.MOUSE_PRESSED, action);
+		event.add(AWTEvent.class, MouseEvent.MOUSE_RELEASED, action);
 
 		area.add(g2 -> {
 

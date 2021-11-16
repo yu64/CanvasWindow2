@@ -1,7 +1,9 @@
 package canvas2.value;
 
 import java.awt.AWTEvent;
+import java.awt.Component;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Set;
 
 import canvas2.event.EventManager;
@@ -12,7 +14,7 @@ import canvas2.util.flag.BasicFlags;
  * キーを監視するクラス。
  *
  */
-public class KeyFlags extends BasicFlags<Integer> implements AwtListener{
+public class KeyFlags extends BasicFlags<Integer> implements AwtListener, KeyListener{
 
 
 
@@ -49,8 +51,8 @@ public class KeyFlags extends BasicFlags<Integer> implements AwtListener{
 	 */
 	public void registerTo(EventManager event)
 	{
-		event.add(AwtListener.class, KeyEvent.KEY_PRESSED, this);
-		event.add(AwtListener.class, KeyEvent.KEY_RELEASED, this);
+		event.add(AWTEvent.class, KeyEvent.KEY_PRESSED, this);
+		event.add(AWTEvent.class, KeyEvent.KEY_RELEASED, this);
 	}
 
 	/**
@@ -58,15 +60,38 @@ public class KeyFlags extends BasicFlags<Integer> implements AwtListener{
 	 */
 	public void unregisterTo(EventManager event)
 	{
-		event.remove(AwtListener.class, KeyEvent.KEY_PRESSED, this);
-		event.remove(AwtListener.class, KeyEvent.KEY_RELEASED, this);
+		event.remove(AWTEvent.class, KeyEvent.KEY_PRESSED, this);
+		event.remove(AWTEvent.class, KeyEvent.KEY_RELEASED, this);
+	}
+
+	/**
+	 * リスナー登録。
+	 */
+	public void registerTo(Component c)
+	{
+		c.addKeyListener(this);
+	}
+
+	/**
+	 * リスナー削除。
+	 */
+	public void unregisterTo(Component c)
+	{
+		c.removeKeyListener(this);
+	}
+
+
+	protected void setPressedFlag(KeyEvent e)
+	{
+		boolean isPressed = (e.getID() == KeyEvent.KEY_PRESSED);
+		this.setFlag(e.getKeyCode(), isPressed, false);
 	}
 
 	/**
 	 * キー入力を受け取るためのリスナー
 	 */
 	@Override
-	public void action(float tpf, AWTEvent v) throws Exception
+	public void act(float tpf, AWTEvent v) throws Exception
 	{
 		if( !(v instanceof KeyEvent))
 		{
@@ -74,10 +99,26 @@ public class KeyFlags extends BasicFlags<Integer> implements AwtListener{
 		}
 
 		KeyEvent e = (KeyEvent) v;
+		this.setPressedFlag(e);
+	}
 
-		boolean isPressed = (e.getID() == KeyEvent.KEY_PRESSED);
-		this.setFlag(e.getKeyCode(), isPressed, false);
+	@Override
+	public void keyTyped(KeyEvent e)
+	{
 
 	}
+
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		this.setPressedFlag(e);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+		this.setPressedFlag(e);
+	}
+
 
 }

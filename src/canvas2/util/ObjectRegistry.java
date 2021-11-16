@@ -15,8 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ObjectRegistry<T> {
 
 	//すべてのオブジェクトを管理するマップ
-	private final Map<Class<? extends T>, Collection<? extends T>> pair = new ConcurrentHashMap<>();
-
+	private final Map<Class<?>, Collection<?>> pair = new ConcurrentHashMap<>();
 
 
 	//管理するオブジェクトの種類を追加
@@ -38,19 +37,28 @@ public class ObjectRegistry<T> {
 	}
 
 
-	public <O extends T> void register(O obj)
+
+
+
+	public <O extends T> boolean add(O obj)
 	{
-		for(Entry<Class<? extends T>, Collection<? extends T>> e : this.pair.entrySet())
+		boolean output = false;
+		for(Entry<Class<?>, Collection<?>> e : this.pair.entrySet())
 		{
 			if( !(e.getKey().isAssignableFrom(obj.getClass())))
 			{
 				continue;
 			}
 
-
 			Collection<O> c = (Collection<O>) e.getValue();
-			c.add(obj);
+			if(c.add(obj))
+			{
+				output = true;
+			}
 		}
+
+
+		return output;
 	}
 
 	public <O extends T> Collection<O> get(Class<O> clazz)
@@ -59,9 +67,10 @@ public class ObjectRegistry<T> {
 	}
 
 
-	public <O extends T> void unregister(O obj)
+	public <O extends T> boolean remove(O obj)
 	{
-		for(Entry<Class<? extends T>, Collection<? extends T>> e : this.pair.entrySet())
+		boolean output = false;
+		for(Entry<Class<?>, Collection<?>> e : this.pair.entrySet())
 		{
 			if( !(e.getKey().isAssignableFrom(obj.getClass())))
 			{
@@ -69,13 +78,18 @@ public class ObjectRegistry<T> {
 			}
 
 			Collection<O> c = (Collection<O>) e.getValue();
-			c.remove(obj);
+			if(c.remove(obj))
+			{
+				output = true;
+			}
 		}
+
+		return output;
 	}
 
-	public void unregisterAll()
+	public void removeAll()
 	{
-		for(Entry<Class<? extends T>, Collection<? extends T>> e : this.pair.entrySet())
+		for(Entry<Class<?>, Collection<?>> e : this.pair.entrySet())
 		{
 			e.getValue().clear();
 		}

@@ -1,9 +1,11 @@
 package canvas2;
 
+import java.awt.AWTEvent;
+
 import canvas2.debug.TextTree;
 import canvas2.event.EventManager;
+import canvas2.event.awt.AwtConnector;
 import canvas2.event.awt.AwtDispatcher;
-import canvas2.event.awt.AwtRelay;
 import canvas2.logic.AppLogic;
 import canvas2.view.AppWindow;
 import canvas2.view.scene.Node;
@@ -45,9 +47,7 @@ public class App implements AutoCloseable, TextTree{
 		this.stop();
 		this.root.clearChild();
 		this.logic.clear();
-		this.event.clearListener();
-		this.event.clearDispatcher();
-		this.event.clearRelay();
+		this.event.clear();
 	}
 
 	public void setup()
@@ -61,10 +61,10 @@ public class App implements AutoCloseable, TextTree{
 		this.logic.add(this.event);
 
 		//ウィンドウのイベントを扱うディスパッチャーを登録。
-		this.event.addDispatcher(new AwtDispatcher());
+		this.event.setDispatcher(AWTEvent.class, new AwtDispatcher());
 
-		//ウィンドウからイベントを取得するために、登録。
-		this.event.addRelay(new AwtRelay(this.window));
+		//ウィンドウのイベントとのコネクタ。
+		this.window.getToolkit().addAWTEventListener(new AwtConnector(this.event), Long.MAX_VALUE);
 	}
 
 	/**

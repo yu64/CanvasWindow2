@@ -1,8 +1,11 @@
 package canvas2.state;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
 import canvas2.core.Updatable;
@@ -17,16 +20,28 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	private Map<S, Map<S, BooleanSupplier>> table = new HashMap<>();
 	private Map<S, Map<S, Updatable>> change = new HashMap<>();
 	private Map<S, Updatable> action = new HashMap<>();
+	private Deque<S> transferDeque = new ArrayDeque<>();
 
 
 	public StateTable(S initState)
 	{
+		Objects.requireNonNull(initState);
+
 		this.now = initState;
+		this.table = this.createMap();
+		this.change = this.createMap();
+		this.action = this.createMap();
+		this.transferDeque = this.createDeque();
 	}
 
 	protected <A, B> Map<A, B> createMap()
 	{
 		return new HashMap<>();
+	}
+
+	protected Deque<S> createDeque()
+	{
+		return new ArrayDeque<>();
 	}
 
 
@@ -84,6 +99,11 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	 */
 	public void nextState(S next)
 	{
+		Objects.requireNonNull(next);
+
+		this.transferDeque.addFirst(this.now);
+		this.transferDeque.addFirst(next);
+
 		this.now = next;
 	}
 
@@ -95,26 +115,16 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		Updatable action = this.action.get(this.now);
 		if(action != null)
 		{
-			try
-			{
-				action.update(tpf);
-			}
-			catch (Exception e1)
-			{
-				e1.printStackTrace();
-			}
+			action.updateAndThrow(tpf);
 		}
 
+		//状態遷移
 		Map<S, BooleanSupplier> map = this.table.get(this.now);
 		if(map == null)
 		{
 			return;
 		}
 
-		Map<S, Updatable> change = this.change.get(this.now);
-
-
-		//状態遷移
 		for(Entry<S, BooleanSupplier> e : map.entrySet())
 		{
 			if(!e.getValue().getAsBoolean())
@@ -122,27 +132,35 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 				continue;
 			}
 
-			//遷移時の処理
-			if(change != null)
-			{
-				Updatable u = change.get(e.getKey());
-
-				try
-				{
-					u.update(tpf);
-				}
-				catch (Exception e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-
 			//遷移
 			this.nextState(e.getKey());
-			return;
+			break;
+		}
+
+
+		//遷移時の処理を実行。
+		while(!this.transferDeque.isEmpty())
+		{
+			S ori = this.transferDeque.pollLast();
+			S dest = this.transferDeque.pollLast();
+
+			Map<S, Updatable> change = this.change.get(ori);
+			if(change == null)
+			{
+				continue;
+			}
+
+			Updatable u = change.get(dest);
+			if(u == null)
+			{
+				continue;
+			}
+
+			u.updateAndThrow(tpf);
 		}
 
 	}
+
 
 
 	@Override
