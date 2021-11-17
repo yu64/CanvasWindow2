@@ -1,9 +1,8 @@
 
 
-
 module canvas2 {
 
 	requires java.desktop;
 
-	requires canvas2;
+	exports canvas2;
 }

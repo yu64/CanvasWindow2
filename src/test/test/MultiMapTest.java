@@ -78,6 +78,7 @@ class MultiMapTest {
 		System.out.println(map);
 		System.out.println(TextTree.getText(map));
 
+
 		Set<Integer> set2 = Set.of(1, 2, 3);
 
 		Set<Integer> set1 = new HashSet<>();
