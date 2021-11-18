@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import canvas2.App;
-import canvas2.debug.TextTree;
+import canvas2.core.debug.TextTree;
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtListener;
 import canvas2.state.StateTable;

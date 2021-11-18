@@ -4,8 +4,8 @@ import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 
+import canvas2.core.event.Listener;
 import canvas2.event.Dispatcher;
-import canvas2.event.Listener;
 
 public class BasicDispatcher<E extends EventObject> implements Dispatcher<E>{
 

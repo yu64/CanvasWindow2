@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 
 import canvas2.core.Drawable;
-import canvas2.debug.TextTree;
+import canvas2.core.debug.TextTree;
 import canvas2.view.AppWindow;
 
 /**

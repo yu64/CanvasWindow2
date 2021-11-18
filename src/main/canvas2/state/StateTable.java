@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
 import canvas2.core.Updatable;
-import canvas2.debug.TextTree;
+import canvas2.core.debug.TextTree;
 import canvas2.state.obj.State;
 
 /**

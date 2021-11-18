@@ -2,14 +2,17 @@ package canvas2.event.awt;
 
 import java.awt.AWTEvent;
 
-import canvas2.event.Listener;
+import canvas2.core.event.Listener;
 
-/** float tpf, AWTEvent e **/
+/**
+ * {@link AWTEvent}のリスナー<br>
+ * 定義: (float tpf, {@link AWTEvent} awt)<br>
+ *
+ * 識別子にAWTイベントIDを指定できる。
+ *
+ *
+ */
 public interface AwtListener extends Listener<AWTEvent>{
-
-
-	public void act(float tpf, AWTEvent e) throws Exception;
-
 
 
 

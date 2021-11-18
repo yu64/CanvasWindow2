@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import canvas2.event.Listener;
-import canvas2.event.basic.BasicDispatcher;
-
 import java.util.Set;
 
+import canvas2.core.event.Listener;
+import canvas2.event.basic.BasicDispatcher;
+
+/**
+ * {@link AwtListener}を管理するディスパッチャー<br>
+ * 識別子にAWTイベントIDを指定できる。
+ */
 public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 
 

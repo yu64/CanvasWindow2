@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import canvas2.debug.TextTree;
+import canvas2.core.debug.TextTree;
 import canvas2.util.MultiKeyMap;
 
 class MultiMapTest {

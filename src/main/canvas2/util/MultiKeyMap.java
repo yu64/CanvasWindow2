@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
-import canvas2.debug.TextTree;
+import canvas2.core.debug.TextTree;
 
 /**
  * 複数のキーを持つ連想配列。<br>

@@ -1,4 +1,4 @@
-package canvas2.event;
+package canvas2.core.event;
 
 import java.util.EventListener;
 import java.util.EventObject;

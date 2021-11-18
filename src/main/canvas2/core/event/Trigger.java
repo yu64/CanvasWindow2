@@ -1,4 +1,4 @@
-package canvas2.core;
+package canvas2.core.event;
 
 import java.util.EventObject;
 

@@ -1,29 +1,32 @@
 package canvas2.state.event;
 
-import canvas2.core.Trigger;
-import canvas2.event.EventManager;
+import canvas2.core.event.Trigger;
 import canvas2.state.StateTable;
 import canvas2.state.obj.State;
 
 public class TriggerStateTable<S extends State> extends StateTable<S>{
 
-	private Trigger trigger;
+	private Trigger trigger = null;
 
-	public TriggerStateTable(S initState, EventManager event)
+	public TriggerStateTable(S initState)
 	{
-		this(initState, event.createTrigger());
+		super(initState);
 	}
 
 	public TriggerStateTable(S initState, Trigger trigger)
 	{
-		super(initState);
+		this(initState);
 		this.trigger = trigger;
 	}
 
 	@Override
 	protected void doTransferAction(float tpf, S ori, S dest)
 	{
-		this.trigger.dispatch(new StateChangeEvent<S>(this, ori, dest));
+		if(this.trigger != null)
+		{
+			this.trigger.dispatch(new StateChangeEvent(this, ori, dest));
+		}
+
 		super.doTransferAction(tpf, ori, dest);
 	}
 

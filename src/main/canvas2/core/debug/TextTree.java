@@ -1,4 +1,4 @@
-package canvas2.debug;
+package canvas2.core.debug;
 
 public interface TextTree {
 

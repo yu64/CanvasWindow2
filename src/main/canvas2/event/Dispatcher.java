@@ -2,6 +2,8 @@ package canvas2.event;
 
 import java.util.EventObject;
 
+import canvas2.core.event.Listener;
+
 public interface Dispatcher<E extends EventObject> {
 
 

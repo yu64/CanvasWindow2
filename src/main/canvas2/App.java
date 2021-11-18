@@ -3,7 +3,7 @@ package canvas2;
 import java.awt.AWTEvent;
 import java.awt.Toolkit;
 
-import canvas2.debug.TextTree;
+import canvas2.core.debug.TextTree;
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtConnector;
 import canvas2.event.awt.AwtDispatcher;

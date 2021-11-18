@@ -1,9 +1,8 @@
 package canvas2.util.flag;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -13,38 +12,12 @@ import java.util.Set;
 public class BasicFlags<I> implements Flags<I>{
 
 
-	private Map<I, Boolean> flag;
-	private int trueCount = 0;
+	private Set<I> flag;
+	private ChangeListener<I> listener;
 
-	/**
-	 * 識別子の種類を指定して作成。
-	 */
-	@SafeVarargs
-	public BasicFlags(I... id)
+	public BasicFlags()
 	{
-		Objects.requireNonNull(id);
-
-		this.flag = this.createMap();
-		for(I s : id)
-		{
-			Objects.requireNonNull(s);
-			this.flag.put(s, false);
-		}
-	}
-
-	/**
-	 * 識別子の種類を指定して作成。
-	 */
-	public BasicFlags(Set<I> id)
-	{
-		Objects.requireNonNull(id);
-
-		this.flag = this.createMap();
-		for(I s : id)
-		{
-			Objects.requireNonNull(s);
-			this.flag.put(s, false);
-		}
+		this.flag = this.createSet();
 	}
 
 	protected Map<I, Boolean> createMap()
@@ -52,36 +25,55 @@ public class BasicFlags<I> implements Flags<I>{
 		return new HashMap<>();
 	}
 
+	protected Set<I> createSet()
+	{
+		return new HashSet<>();
+	}
 
-
-
+	@Override
 	public void setFlag(I id, boolean flag, boolean canThrow)
 	{
-		Boolean b = this.flag.get(id);
+		boolean b = this.flag.contains(id);
 
-		//存在するキーで、
 		//現在の値が設定される値と異なるとき、値を変更する。
-		if(b != null && !b.equals(flag))
+		if(b == flag)
 		{
-			this.flag.put(id, flag);
-			this.trueCount += (flag ? 1 : -1);
 			return;
 		}
 
-		if(b == null && canThrow)
+		if(flag)
 		{
-			this.throwNotFindKey(id);
+			this.flag.add(id);
+		}
+		else
+		{
+			this.flag.remove(id);
+		}
+
+
+		if(this.listener != null)
+		{
+			this.listener.onChange(this, id, b, flag);
 		}
 
 	}
 
+	@Override
+	public void flipFlag(I id, boolean canThrow)
+	{
+		boolean b = this.isTrue(id);
+		this.setFlag(id, !b, canThrow);
+	}
 
 
+
+	@Override
 	public void enable(I id, boolean canThrow)
 	{
 		this.setFlag(id, true, canThrow);
 	}
 
+	@Override
 	public void disable(I id, boolean canThrow)
 	{
 		this.setFlag(id, false, canThrow);
@@ -89,16 +81,16 @@ public class BasicFlags<I> implements Flags<I>{
 
 
 
+	@Override
+	public boolean exist(I id)
+	{
+		return true;
+	}
 
+	@Override
 	public boolean isTrue(I id)
 	{
-		Boolean b = this.flag.get(id);
-		if(b == null)
-		{
-			this.throwNotFindKey(id);
-		}
-
-		return b;
+		return this.flag.contains(id);
 	}
 
 	@Override
@@ -107,43 +99,46 @@ public class BasicFlags<I> implements Flags<I>{
 		return !this.isTrue(id);
 	}
 
-	protected void throwNotFindKey(I id)
+
+	@Override
+	public int getAllCount()
 	{
-		throw new RuntimeException("not find : " + id);
+		return Integer.MAX_VALUE;
 	}
 
-
-	public int getAllCount()
+	@Override
+	public int getTrueCount()
 	{
 		return this.flag.size();
 	}
 
-	public int getTrueCount()
-	{
-		return this.trueCount;
-	}
-
+	@Override
 	public int getFalseCount()
 	{
-		return this.flag.size() - this.trueCount;
+		return this.getAllCount() - this.getTrueCount();
 	}
 
 
+	@Override
 	public boolean isAllTrue()
 	{
 		return this.getTrueCount() == this.getAllCount();
 	}
 
+	@Override
 	public boolean isAllFalse()
 	{
 		return this.getFalseCount() == this.getAllCount();
 	}
 
 	@Override
-	public Iterator<I> iterator()
+	public void setListener(ChangeListener<I> listener)
 	{
-		return this.flag.keySet().iterator();
+		this.listener = listener;
 	}
+
+
+
 
 
 
