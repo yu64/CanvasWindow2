@@ -14,12 +14,12 @@ import canvas2.App;
 import canvas2.core.debug.TextTree;
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtListener;
+import canvas2.event.flag.KeyFlags;
+import canvas2.file.LoaderManager;
+import canvas2.file.ReadTicket;
 import canvas2.state.StateTable;
 import canvas2.state.obj.StateImpl;
 import canvas2.util.TransformUtil;
-import canvas2.value.KeyFlags;
-import canvas2.value.file.LoaderManager;
-import canvas2.value.file.ReadTicket;
 import canvas2.value.file.test.TestObject1;
 import canvas2.value.file.test.TestObject2;
 import canvas2.value.file.test.TestReader2;
@@ -232,9 +232,9 @@ public class MainSample2 {
 		StateImpl stateC = new StateImpl();
 
 		StateTable<StateImpl> table = new StateTable<>(stateA);
-		table.register(stateA, stateB, () -> flag.isPressed(KeyEvent.VK_1));
-		table.register(stateB, stateC, () -> flag.isPressed(KeyEvent.VK_2));
-		table.register(stateC, stateA, () -> flag.isPressed(KeyEvent.VK_3));
+		table.set(stateA, stateB, () -> flag.isPressed(KeyEvent.VK_1));
+		table.set(stateB, stateC, () -> flag.isPressed(KeyEvent.VK_2));
+		table.set(stateC, stateA, () -> flag.isPressed(KeyEvent.VK_3));
 		app.getLogic().add(table);
 
 		node.add(g2 -> {

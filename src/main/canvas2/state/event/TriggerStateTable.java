@@ -20,14 +20,13 @@ public class TriggerStateTable<S extends State> extends StateTable<S>{
 	}
 
 	@Override
-	protected void doTransferAction(float tpf, S ori, S dest)
+	protected void onPostChange(S prev, S now)
 	{
 		if(this.trigger != null)
 		{
-			this.trigger.dispatch(new StateChangeEvent(this, ori, dest));
+			this.trigger.dispatch(new StateChangeEvent(this, prev, now));
 		}
 
-		super.doTransferAction(tpf, ori, dest);
 	}
 
 

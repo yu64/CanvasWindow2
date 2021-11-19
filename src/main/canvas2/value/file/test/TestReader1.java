@@ -5,9 +5,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Set;
 
-import canvas2.value.file.LoaderManager;
-import canvas2.value.file.ReadTicket;
-import canvas2.value.file.Reader;
+import canvas2.file.LoaderManager;
+import canvas2.file.ReadTicket;
+import canvas2.file.Reader;
 
 public class TestReader1 implements Reader<TestObject1>{
 

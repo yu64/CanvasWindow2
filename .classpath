@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main"/>
-	<classpathentry kind="src" output="CanvasWindow2/test" path="src/test">
+	<classpathentry kind="src" output="output_test" path="src/test">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>

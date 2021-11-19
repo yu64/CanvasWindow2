@@ -1,4 +1,4 @@
-package canvas2.value;
+package canvas2.event.flag;
 
 import java.awt.AWTEvent;
 import java.awt.Component;

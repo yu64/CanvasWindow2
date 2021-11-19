@@ -1,4 +1,4 @@
-package canvas2.value.file;
+package canvas2.file;
 
 import java.util.Set;
 

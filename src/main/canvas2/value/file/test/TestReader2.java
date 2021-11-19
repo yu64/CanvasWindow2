@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import canvas2.value.file.LoaderManager;
-import canvas2.value.file.ReadTicket;
-import canvas2.value.file.Reader;
+import canvas2.file.LoaderManager;
+import canvas2.file.ReadTicket;
+import canvas2.file.Reader;
 
 public class TestReader2 implements Reader<TestObject2>{
 

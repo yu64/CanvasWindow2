@@ -11,7 +11,7 @@ public final class TransformUtil {
 
 	private TransformUtil()
 	{
-
+		
 	}
 
 	public static Point2D inverseTransform(AffineTransform t, Point2D in, Point2D out)

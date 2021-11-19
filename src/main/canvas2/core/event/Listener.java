@@ -7,7 +7,7 @@ public interface Listener<E extends EventObject> extends EventListener{
 
 	public void act(float tpf, E e) throws Exception;
 
-	default public void actAndThrow(float tpf, E e)
+	public default void actAndThrow(float tpf, E e)
 	{
 		try
 		{

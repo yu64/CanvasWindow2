@@ -8,8 +8,8 @@ import java.util.Set;
 
 import canvas2.App;
 import canvas2.event.EventManager;
+import canvas2.event.flag.KeyFlags;
 import canvas2.util.TransformUtil;
-import canvas2.value.KeyFlags;
 import canvas2.view.scene.Node;
 
 public class MainSample1 {
