@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
@@ -18,10 +17,9 @@ import canvas2.state.obj.State;
 public class StateTable<S extends State> implements Updatable, TextTree{
 
 	private S now;
-	private Map<S, Map<S, BooleanSupplier>> table = new HashMap<>();
-	private Map<S, Map<S, Updatable>> change = new HashMap<>();
+
+	private Map<S, Entry> table = new HashMap<>();
 	private Map<S, Updatable> action = new HashMap<>();
-	private Deque<S> transferDeque = new ArrayDeque<>();
 
 
 	public StateTable(S initState)
@@ -30,9 +28,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 
 		this.now = initState;
 		this.table = this.createMap();
-		this.change = this.createMap();
 		this.action = this.createMap();
-		this.transferDeque = this.createDeque();
 	}
 
 	protected <A, B> Map<A, B> createMap()
@@ -45,6 +41,10 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		return new ArrayDeque<>();
 	}
 
+	protected Entry createEntry(S now, S next)
+	{
+		return new Entry(now, next);
+	}
 
 	/**
 	 * 指定した状態かつ、指定した条件が真であるとき、<br>
@@ -52,14 +52,24 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	 */
 	public void register(S now, S next, BooleanSupplier condition)
 	{
-		Map<S, BooleanSupplier> map = this.table.get(now);
-		if(map == null)
-		{
-			map = this.createMap();
-		}
+		this.allow(now, next);
 
-		map.put(next, condition);
-		this.table.put(now, map);
+		Entry e = this.table.get(now);
+		e.setCondition(condition);
+	}
+
+	/**
+	 * 指定した状態から、次の指定した状態に遷移することを登録する。<br>
+	 * この時、遷移条件は、存在しない。
+	 */
+	public void allow(S now, S next)
+	{
+		Entry e = this.table.get(now);
+		if(e != null)
+		{
+			e = this.createEntry(now, next);
+			this.table.put(now, e);
+		}
 	}
 
 	/**
@@ -74,16 +84,12 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	 * 指定した状態から、次の指定した状態に遷移したとき、
 	 * 処理することを登録する。
 	 */
-	public void register(S now, S next, Updatable condition)
+	public void register(S now, S next, ChangeListener<S> change)
 	{
-		Map<S, Updatable> map = this.change.get(now);
-		if(map == null)
-		{
-			map = this.createMap();
-		}
+		this.allow(now, next);
+		Entry e = this.table.get(now);
 
-		map.put(next, condition);
-		this.change.put(now, map);
+		e.setChange(change);
 	}
 
 
@@ -96,9 +102,57 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	}
 
 	/**
-	 * 強制的に状態を変更する。
+	 * 指定の状態へ遷移を試みる。<br>
+	 * 遷移条件を評価し、遷移可能であるとき遷移する。
 	 */
-	public void nextState(S next)
+	public boolean tryMoveState(S next)
+	{
+		Map<S, BooleanSupplier> map = this.table.get(this.now);
+		if(map == null)
+		{
+			return false;
+		}
+
+		BooleanSupplier c = map.get(next);
+		if(c != null && c.getAsBoolean())
+		{
+			this.setState(next);
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * 遷移条件に関係なく遷移する。<br>
+	 * ただし、遷移が登録されていないければならない。
+	 */
+	public void moveState(S next, boolean canThrow)
+	{
+		Entry e = this.table.get(this.now);
+		if(e == null)
+		{
+			if(canThrow)
+			{
+				this.throwNotAllowed(next);
+			}
+
+			return;
+		}
+
+		this.setState(next);
+	}
+
+	protected void throwNotAllowed(S next)
+	{
+		throw new RuntimeException("Not allowed. " + next);
+	}
+
+
+	/**
+	 * 遷移条件に関係なく強制的に状態を変更する。
+	 */
+	public void setState(S next)
 	{
 		Objects.requireNonNull(next);
 
@@ -134,7 +188,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 			}
 
 			//遷移
-			this.nextState(e.getKey());
+			this.setState(e.getKey());
 			break;
 		}
 
@@ -227,6 +281,57 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 
 
 		return sb;
+	}
+
+	public class Entry {
+
+		private S prev;
+		private S next;
+
+		private BooleanSupplier condition;
+		private ChangeListener<S> change;
+
+		protected Entry(S prev, S next)
+		{
+			this.prev = prev;
+			this.next = next;
+		}
+
+		public S getPrev()
+		{
+			return prev;
+		}
+
+		public S getNext()
+		{
+			return next;
+		}
+
+		public BooleanSupplier getCondition()
+		{
+			return condition;
+		}
+
+		public void setCondition(BooleanSupplier condition)
+		{
+			this.condition = condition;
+		}
+
+		public ChangeListener<S> getChange()
+		{
+			return change;
+		}
+
+		public void setChange(ChangeListener<S> change)
+		{
+			this.change = change;
+		}
+	}
+
+	public static interface ChangeListener<S extends State> {
+
+		public void onChange(StateTable<S> src, S next, S prev);
+
 	}
 
 
