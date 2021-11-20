@@ -1,4 +1,4 @@
-package canvas2.value.file.test;
+package canvas2.file.test;
 
 public class TestObject2 {
 

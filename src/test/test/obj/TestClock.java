@@ -1,4 +1,4 @@
-package test;
+package test.obj;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,11 +14,6 @@ public class TestClock extends Clock{
 	}
 
 
-	@Override
-	public long getMillTime()
-	{
-		return this.getTime(TimeUnit.MILLISECONDS);
-	}
 
 	@Override
 	public long getTime(TimeUnit unit)

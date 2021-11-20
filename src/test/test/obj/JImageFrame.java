@@ -1,4 +1,4 @@
-package test;
+package test.obj;
 
 import java.awt.Dimension;
 import java.awt.Graphics;

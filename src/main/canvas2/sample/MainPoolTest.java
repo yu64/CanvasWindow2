@@ -12,7 +12,6 @@ import canvas2.util.Pool.PoolEntry;
 
 public class MainPoolTest {
 
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args)
 	{
 		Pool pool = new Pool();

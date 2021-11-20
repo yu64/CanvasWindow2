@@ -56,7 +56,7 @@ class SceneGraphTest {
 	@Ignore
 	public void test1()
 	{
-		System.out.println(this.getClass().getSimpleName());
+		System.out.println("[" + this.getClass().getSimpleName() + "] setup");
 
 		String enter = System.lineSeparator();
 		String answer = "";

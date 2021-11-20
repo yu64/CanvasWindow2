@@ -51,8 +51,8 @@ public class Pool {
 		this.entrys.put(clazz, entry);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> T obtain(T... empty)
+	@SafeVarargs
+	public final <T> T obtain(T... empty)
 	{
 		Class<T> clazz = CastUtil.getComponentClass(empty);
 		return this.obtain(clazz);
@@ -96,8 +96,8 @@ public class Pool {
 		return () -> this.free(obj);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> PoolEntry<T> getEntry(T... empty)
+	@SafeVarargs
+	public final <T> PoolEntry<T> getEntry(T... empty)
 	{
 		Class<T> clazz = CastUtil.getComponentClass(empty);
 		return this.getEntry(clazz);

@@ -2,6 +2,7 @@ package canvas2.util;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -100,7 +101,7 @@ public class MultiKeyMap<K, V> {
 	}
 	
 	
-	public static class Keys<K> {
+	public static class Keys<K> implements Iterable<K>{
 		
 		private K[] keys;
 		
@@ -120,19 +121,10 @@ public class MultiKeyMap<K, V> {
 			return this.keys[index];
 		}
 		
-		public K[] getKeys()
+		@Override
+		public Iterator<K> iterator()
 		{
-			@SuppressWarnings("unchecked")
-			K[] output = (K[])new Object[this.keys.length];
-			return output;
-		}
-		
-		public K[] getKeys(K[] output)
-		{
-			int len = Math.min(this.keys.length, output.length);
-			System.arraycopy(this.keys, 0, output, 0, len);
-			
-			return output;
+			return Arrays.asList(this.keys).iterator();
 		}
 		
 		@Override
@@ -148,7 +140,6 @@ public class MultiKeyMap<K, V> {
 				return false;
 			}
 			
-			@SuppressWarnings("unchecked")
 			Keys<K> keys = (Keys<K>)o;
 			
 			return Arrays.equals(this.keys, keys.keys);
@@ -160,6 +151,8 @@ public class MultiKeyMap<K, V> {
 		{
 			return Arrays.hashCode(this.keys);
 		}
+
+	
 		
 	}
 

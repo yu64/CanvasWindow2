@@ -11,6 +11,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 import canvas2.core.Updatable;
 import canvas2.util.CastUtil;
 
+@Deprecated
 public class LoaderManager implements Updatable{
 
 	//登録されたReader

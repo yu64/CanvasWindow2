@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class InterveneMap<K> {
+public class StorageMap<K> {
 
 	private Map<K, Entry> data = this.createMap();
 	private boolean canThrow;
 	
-	public InterveneMap(boolean canThrow)
+	public StorageMap(boolean canThrow)
 	{
 		this.canThrow = canThrow;
 	}
@@ -86,8 +86,6 @@ public class InterveneMap<K> {
 	
 	/**
 	 * 指定したキーの値を取得する。<br>
-	 * キーが登録されていない場合、例外を投げることができる。<br>
-	 * 値がnullであるとき、代わりの値を返す。<br>
 	 */
 	public Object get(K key)
 	{
@@ -113,7 +111,23 @@ public class InterveneMap<K> {
 	
 	public Object get(K key, Supplier<Object> def)
 	{
-		
+		return this.get(key, Object.class, def);
+	}
+	
+	public <V> V get(K key, Class<V> c)
+	{
+		return CastUtil.cast(this.get(key));
+	}
+	
+	public <V> V get(K key, Class<V> c, Supplier<V> def)
+	{
+		V output = this.get(key, c);
+		if(output == null)
+		{
+			return def.get();
+		}
+	
+		return output;
 	}
 	
 	
@@ -188,7 +202,7 @@ public class InterveneMap<K> {
 	
 	public interface ChangeListener<K> {
 		
-		public void onChange(InterveneMap<K> src, K key, Object prev, Object next);
+		public void onChange(StorageMap<K> src, K key, Object prev, Object next);
 	}
 	
 	

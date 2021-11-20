@@ -145,11 +145,9 @@ public class Node implements Drawable, TextTree{
 	{
 		String enter = System.lineSeparator();
 		String tab1 = "\t".repeat(nest);
-		String title = this.getClass().getSimpleName();
 
 		sb.append(tab1);
-		sb.append(title);
-		sb.append("[").append(this.getName()).append("]");
+		sb.append(this.toString());
 		sb.append(enter);
 
 		String tab2 = tab1 + "\t";
@@ -197,7 +195,8 @@ public class Node implements Drawable, TextTree{
 	@Override
 	public String toString()
 	{
-		return this.getName() + ": ";
+		String name = this.getClass().getSimpleName();
+		return name + "[" + this.getName() + "]";
 	}
 
 	@FunctionalInterface

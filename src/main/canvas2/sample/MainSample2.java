@@ -17,12 +17,12 @@ import canvas2.event.awt.AwtListener;
 import canvas2.event.flag.KeyFlags;
 import canvas2.file.LoaderManager;
 import canvas2.file.ReadTicket;
+import canvas2.file.test.TestObject1;
+import canvas2.file.test.TestObject2;
+import canvas2.file.test.TestReader2;
 import canvas2.state.StateTable;
 import canvas2.state.obj.StateImpl;
 import canvas2.util.TransformUtil;
-import canvas2.value.file.test.TestObject1;
-import canvas2.value.file.test.TestObject2;
-import canvas2.value.file.test.TestReader2;
 import canvas2.view.scene.Node;
 import canvas2.view.scene.TrackingArea;
 

@@ -20,16 +20,26 @@ public class Clock {
 
 		return Clock.INSTANCE;
 	}
-
+	
+	public long getSecondTime()
+	{
+		return this.getTime(TimeUnit.SECONDS);
+	}
+	
 	public long getMillTime()
 	{
 		return this.getTime(TimeUnit.MILLISECONDS);
+	}
+	
+	public long getNanoTime()
+	{
+		return this.getTime(TimeUnit.NANOSECONDS);
 	}
 
 
 	public long getTime(TimeUnit unit)
 	{
-		return unit.convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+		return unit.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
 	}
 
 

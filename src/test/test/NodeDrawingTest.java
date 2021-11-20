@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import canvas2.core.Drawable;
 import canvas2.view.scene.Node;
+import test.obj.JImageFrame;
 
 class NodeDrawingTest {
 
@@ -25,12 +26,14 @@ class NodeDrawingTest {
 	@BeforeEach
 	public void setup()
 	{
-		System.out.println(this.getClass().getSimpleName() + " setup");
+		System.out.println("[" + this.getClass().getSimpleName() + "] setup");
 
 		this.root = new Node("root");
 		this.groupA = new Node("groupA");
 		this.groupB = new Node("groupB");
 
+		
+		//見本画像を作成。
 		this.item1 = (g2 -> {
 
 			g2.setColor(Color.GREEN);
@@ -79,6 +82,7 @@ class NodeDrawingTest {
 		BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2 = (Graphics2D) image.getGraphics();
 
+		//Nodeで描画
 		this.root.draw(g2);
 		g2.dispose();
 
