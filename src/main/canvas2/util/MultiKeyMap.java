@@ -140,7 +140,7 @@ public class MultiKeyMap<K, V> {
 				return false;
 			}
 			
-			Keys<K> keys = (Keys<K>)o;
+			Keys<K> keys = CastUtil.cast(o);
 			
 			return Arrays.equals(this.keys, keys.keys);
 		}

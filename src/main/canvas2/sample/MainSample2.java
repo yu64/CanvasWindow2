@@ -15,11 +15,6 @@ import canvas2.core.debug.TextTree;
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtListener;
 import canvas2.event.flag.KeyFlags;
-import canvas2.file.LoaderManager;
-import canvas2.file.ReadTicket;
-import canvas2.file.test.TestObject1;
-import canvas2.file.test.TestObject2;
-import canvas2.file.test.TestReader2;
 import canvas2.state.StateTable;
 import canvas2.state.obj.StateImpl;
 import canvas2.util.TransformUtil;
@@ -49,7 +44,6 @@ public class MainSample2 {
 		MainSample2.testMove(app, scroll);
 		MainSample2.testColsed(app);
 		MainSample2.testState(app, overray);
-		//MainTest.testLoad(app, area);
 		MainSample2.testMouse(app, area, scroll);
 		MainSample2.testSubFrame(app, area, overray, pos);
 
@@ -259,46 +253,6 @@ public class MainSample2 {
 		});
 
 		System.out.println(TextTree.getText(table));
-	}
-
-	public static void testLoad(App app, Node node)
-	{
-		LoaderManager loader = new LoaderManager();
-		app.getLogic().add(loader);
-
-		loader.register(new TestReader2());
-
-		String path1 = "canvas2/value/file/test/testFile1.txt";
-		String path2 = "canvas2/value/file/test/testFile2.txt";
-
-		ReadTicket<TestObject1> ticket1 = loader.load(TestObject1.class, path1);
-		ReadTicket<TestObject1> ticket2 = loader.load(TestObject1.class, path1);
-		ReadTicket<TestObject2> ticket3 = loader.load(TestObject2.class, path2);
-
-
-		node.add(g2 -> {
-
-			TestObject1 obj1 = ticket1.getResult();
-			TestObject1 obj2 = ticket2.getResult();
-			TestObject2 obj3 = ticket3.getResult();
-
-			if(obj1 != null)
-			{
-				g2.drawString(obj1.getText(), 100, 100);
-			}
-
-			if(obj2 != null)
-			{
-				g2.drawString(obj2.getText(), 100, 120);
-			}
-
-			if(obj3 != null)
-			{
-				g2.drawString(obj3.getText(), 100, 140);
-			}
-
-		});
-
 	}
 
 

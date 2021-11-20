@@ -1,10 +1,6 @@
 package canvas2.sample;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import canvas2.util.Pool;
@@ -93,10 +89,7 @@ public class MainPoolTest {
 	}
 
 	private static class Heavy {
-
-		private Map<Object, Object> temp1 = new HashMap<>();
-		private List<Object> temp2 = new LinkedList<>();
-
+		
 		public Heavy()
 		{
 			try

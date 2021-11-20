@@ -1,4 +1,4 @@
-package canvas2.view;
+package canvas2.view.swing;
 
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;

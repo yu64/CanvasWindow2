@@ -1,3 +1,0 @@
-
-main/value/test/testFile1.txt
-main/value/test/testFile1.txt

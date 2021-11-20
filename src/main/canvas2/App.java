@@ -17,6 +17,8 @@ import canvas2.view.scene.Node;
  * ここから使い始めることを推奨する。<br>
  *
  */
+
+@SuppressWarnings("exports")
 public class App implements AutoCloseable, TextTree{
 
 	private Node root;
