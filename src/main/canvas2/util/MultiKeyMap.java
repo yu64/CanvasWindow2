@@ -135,14 +135,13 @@ public class MultiKeyMap<K, V> {
 				return true;
 			}
 			
-			if( !(o instanceof Keys) )
+			if(o instanceof Keys)
 			{
-				return false;
+				Keys<?> keys = (Keys<?>) o;
+				return Arrays.equals(this.keys, keys.keys);
 			}
 			
-			Keys<K> keys = CastUtil.cast(o);
-			
-			return Arrays.equals(this.keys, keys.keys);
+			return true;
 		}
 		
 		

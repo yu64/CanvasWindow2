@@ -10,8 +10,10 @@ import javax.swing.JButton;
 
 import canvas2.core.Drawable;
 
-public class JButtonScreen extends JButton{
+public class JCustomButton extends JButton{
 
+
+	private boolean canPaint = true;
 	private Drawable back;
 	private Drawable clicked;
 	private Drawable hover;
@@ -22,29 +24,35 @@ public class JButtonScreen extends JButton{
 		this.setContentAreaFilled(false);
 	}
 
-	public JButtonScreen()
+	public JCustomButton()
 	{
 		super();
 	}
 
-	public JButtonScreen(Action a)
+	public JCustomButton(Action a)
 	{
 		super(a);
 	}
 
-	public JButtonScreen(Icon icon)
+	public JCustomButton(Icon icon)
 	{
 		super(icon);
 	}
 
-	public JButtonScreen(String text, Icon icon)
+	public JCustomButton(String text, Icon icon)
 	{
 		super(text, icon);
 	}
 
-	public JButtonScreen(String text)
+	public JCustomButton(String text)
 	{
 		super(text);
+	}
+	
+	
+	public void setCustomPainted(boolean canPaint)
+	{
+		this.canPaint = canPaint;
 	}
 	
 	public void setBackground(Drawable back)
@@ -62,9 +70,13 @@ public class JButtonScreen extends JButton{
 		this.clicked = clicked;
 	}
 	
-	@Override
-	protected void paintComponent(Graphics g)
+	protected void paintCustom(Graphics g)
 	{
+		if(!this.canPaint)
+		{
+			return;
+		}
+		
 		Graphics2D g2 = (Graphics2D) g;
 		
 		if(this.back != null)
@@ -82,16 +94,18 @@ public class JButtonScreen extends JButton{
 		{
 			this.clicked.draw(g2);
 		}
-		
-		
-		
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g)
+	{
+		this.paintCustom(g);
 		super.paintComponent(g);
 	}
 
 	@Override
 	protected void paintBorder(Graphics g)
 	{
-		// TODO 自動生成されたメソッド・スタブ
 		super.paintBorder(g);
 	}
 
