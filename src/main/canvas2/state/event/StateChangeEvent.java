@@ -4,24 +4,25 @@ import java.util.EventObject;
 
 import canvas2.state.StateTable;
 import canvas2.state.obj.State;
-import canvas2.util.CastUtil;
 
 public class StateChangeEvent extends EventObject{
 
 
 	private State prev;
 	private State next;
+	private StateTable<?> src;
 
 	public StateChangeEvent(StateTable<?> source, State prev, State next)
 	{
 		super(source);
+		this.src = source;
 		this.prev = prev;
 		this.next = next;
 	}
 
 	public StateTable<?> getTable()
 	{
-		return CastUtil.cast(this.getSource());
+		return this.src;
 	}
 
 	public State getPrevState()
