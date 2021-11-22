@@ -62,6 +62,9 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		return new PairEntry<>(now, next);
 	}
 
+
+
+
 	/**
 	 * 指定した状態かつ、指定した条件が真であるとき、<br>
 	 * 次の指定した状態に遷移することを登録する。
@@ -88,7 +91,6 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 
 			this.nextKind.add(next);
 		}
-
 	}
 
 	/**
@@ -111,6 +113,27 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		e.setChange(change);
 	}
 
+	/**
+	 * 指定の遷移が許可されているか。
+	 */
+	public boolean isAllowed(S now, S next)
+	{
+		if(!this.nextKind.contains(next))
+		{
+			return false;
+		}
+
+		PairEntry<S> e = this.table.get(now, next);
+		if(e == null)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+
+
 
 	/**
 	 * 現在の状態を取得する。
@@ -123,7 +146,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	/**
 	 * 現在の状態が、指定した状態であるか。
 	 */
-	public boolean equalsState(State s)
+	public boolean equalsState(S s)
 	{
 		return Objects.equals(this.now, s);
 	}
@@ -171,25 +194,13 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	{
 		Objects.requireNonNull(next);
 
-		if(!this.nextKind.contains(next))
+		if(this.isAllowed(this.now, next))
 		{
 			if(canThrow)
 			{
 				this.throwNotAllowed(next);
+				return;
 			}
-
-			return;
-		}
-
-		PairEntry<S> e = this.table.get(this.now, next);
-		if(e == null)
-		{
-			if(canThrow)
-			{
-				this.throwNotAllowed(next);
-			}
-
-			return;
 		}
 
 		this.setState(next);
@@ -218,6 +229,9 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		}
 
 	}
+
+
+
 
 	/**
 	 * 現在の状態に対応した更新処理を行う。
