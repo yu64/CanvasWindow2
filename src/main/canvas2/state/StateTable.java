@@ -194,7 +194,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	{
 		Objects.requireNonNull(next);
 
-		if(this.isAllowed(this.now, next))
+		if(!this.isAllowed(this.now, next))
 		{
 			if(canThrow)
 			{
