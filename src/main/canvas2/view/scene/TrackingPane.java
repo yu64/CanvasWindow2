@@ -11,11 +11,11 @@ import canvas2.view.AppWindow;
  * 指定の{@link Node}を指定の範囲に描画するクラス。<br>
  * {@link AppWindow}のルートノード配下に登録すること。
  */
-public class TrackingArea extends Area{
+public class TrackingPane extends Pane{
 
 	private Node targetNode;
 
-	public TrackingArea(String outer, String inner, Node targetNode)
+	public TrackingPane(String outer, String inner, Node targetNode)
 	{
 		super(outer, inner);
 		this.targetNode = targetNode;

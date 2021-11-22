@@ -19,7 +19,7 @@ import canvas2.state.StateTable;
 import canvas2.state.obj.StateImpl;
 import canvas2.util.TransformUtil;
 import canvas2.view.scene.Node;
-import canvas2.view.scene.TrackingArea;
+import canvas2.view.scene.TrackingPane;
 
 public class MainSample2 {
 
@@ -286,7 +286,7 @@ public class MainSample2 {
 
 	public static void testSubFrame(App app, Node area, Node overray, Point pos)
 	{
-		TrackingArea sub = new TrackingArea("subFrame", "sub", area);
+		TrackingPane sub = new TrackingPane("subFrame", "sub", area);
 		overray.add(sub);
 
 		Rectangle rect = new Rectangle(0, 0, 200, 200);

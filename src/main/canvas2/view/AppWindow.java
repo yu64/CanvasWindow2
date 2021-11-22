@@ -1,7 +1,6 @@
 package canvas2.view;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.util.Objects;
 
 import javax.swing.JFrame;
@@ -24,22 +23,18 @@ public class AppWindow extends JFrame implements Updatable, TextTree{
 
 	public AppWindow(Node obj)
 	{
-		this(null, new Dimension(960, 540), obj);
+		this(obj, new WindowSetting(null, new Dimension(960, 540)));
 	}
 
-	public AppWindow(Dimension size, Node obj)
+	public AppWindow(Node obj, WindowSetting s)
 	{
-		this(null, size, obj);
+		this.init(s, obj);
 	}
 
-	public AppWindow(Point pos, Dimension size, Node obj)
-	{
-		this.init(pos, size, obj);
-	}
 
-	protected void init(Point pos, Dimension size, Node obj)
+	protected void init(WindowSetting s, Node obj)
 	{
-		Objects.requireNonNull(size);
+		Objects.requireNonNull(s);
 		Objects.requireNonNull(obj);
 
 		this.root = obj;
@@ -48,18 +43,18 @@ public class AppWindow extends JFrame implements Updatable, TextTree{
 		this.screen.setFocusable(true);
 
 		this.add(this.screen);
-		this.setScreenSize(size);
+		this.setScreenSize(s.getScreenSize());
 
 		this.screen.requestFocusInWindow();
 
 
-		if(pos == null)
+		if(s.getPos() == null)
 		{
 			this.setLocationRelativeTo(null);
 		}
 		else
 		{
-			this.getLocation(pos);
+			this.getLocation(s.getPos());
 		}
 
 	}
@@ -76,6 +71,14 @@ public class AppWindow extends JFrame implements Updatable, TextTree{
 
 	public void setScreenSize(Dimension size)
 	{
+		if(size == null)
+		{
+			Dimension s = this.screen.getPreferredSize();
+			s.setSize(0, 0);
+			this.pack();
+			return;
+		}
+
 		this.screen.setPreferredSize(size);
 		this.pack();
 	}

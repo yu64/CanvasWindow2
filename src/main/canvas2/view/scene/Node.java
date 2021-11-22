@@ -175,11 +175,16 @@ public class Node implements Drawable, TextTree{
 	public void draw(Graphics2D g2)
 	{
 		AffineTransform old = g2.getTransform();
-		g2.transform(this.transform);
+
+		synchronized (this.transform)
+		{
+			g2.transform(this.transform);
+		}
 
 		this.drawChild(g2);
 
 		g2.setTransform(old);
+
 	}
 
 	protected void drawChild(Graphics2D g2)

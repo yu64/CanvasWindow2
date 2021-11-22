@@ -11,26 +11,32 @@ import canvas2.view.AppWindow;
 /**
  * 指定の範囲に描画するクラス。<br>
  * {@link AppWindow}のルートノード配下に登録すること。<br>
- * 外側と内側に分かれている。<br>
+ * 外側と内側に分かれている<br>
+ * スクロールなどを行う場合、このクラスを使用し、内側に適用することを推奨する。<br>
  */
-public class Area extends Node {
+public class Pane extends Node {
 
 
 	private Node inner;
 	private Shape shape;
 	private Drawable background;
 
-	public Area(String outer, String inner)
+	public Pane(String outer, String inner)
 	{
 		super(outer);
 
 		this.inner = this.createNode(inner);
-		this.add(this.inner);
+		this.initNodeLink();
 	}
 
 	protected Node createNode(String name)
 	{
 		return new Node(name);
+	}
+
+	protected void initNodeLink()
+	{
+		this.add(this.getInnerNode());
 	}
 
 	public void setBackground(Drawable d)
@@ -48,7 +54,7 @@ public class Area extends Node {
 
 	public AffineTransform getInnerTransfrom()
 	{
-		return this.inner.getTransform();
+		return this.getInnerNode().getTransform();
 	}
 
 	public void setShape(Shape shape)

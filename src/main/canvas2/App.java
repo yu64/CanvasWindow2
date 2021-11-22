@@ -3,11 +3,13 @@ package canvas2;
 import java.awt.AWTEvent;
 import java.awt.Toolkit;
 
+import canvas2.core.Updatable;
 import canvas2.core.debug.TextTree;
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtConnector;
 import canvas2.event.awt.AwtDispatcher;
 import canvas2.logic.AppLogic;
+import canvas2.time.TimeInterval;
 import canvas2.view.AppWindow;
 import canvas2.view.scene.Node;
 
@@ -15,7 +17,6 @@ import canvas2.view.scene.Node;
  * 主に必要な要素を集めたクラス。<br>
  * ルートノード、ウィンドウ、ロジック、イベントを含む。<br>
  * ここから使い始めることを推奨する。<br>
- *
  */
 
 @SuppressWarnings("exports")
@@ -47,6 +48,16 @@ public class App implements AutoCloseable, TextTree{
 		this.setup();
 	}
 
+	protected Updatable convartWindowUpdatable(Updatable obj)
+	{
+		return new TimeInterval(16, obj);
+	}
+
+	protected Updatable convartEventUpdatable(Updatable obj)
+	{
+		return obj;
+	}
+
 	protected AwtConnector createAwtConnector(EventManager event)
 	{
 		return new AwtConnector(event);
@@ -69,10 +80,10 @@ public class App implements AutoCloseable, TextTree{
 		this.init();
 
 		//描画更新のために、登録
-		this.logic.add(this.window);
+		this.logic.add(this.convartWindowUpdatable(this.window));
 
 		//イベント実行のために、登録。
-		this.logic.add(this.event);
+		this.logic.add(this.convartEventUpdatable(this.event));
 
 		//ウィンドウのイベントを扱うディスパッチャーを登録。
 		this.event.setDispatcher(AWTEvent.class, new AwtDispatcher());
