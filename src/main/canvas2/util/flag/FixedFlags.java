@@ -43,6 +43,10 @@ public class FixedFlags<I> extends BasicFlags<I>{
 		throw new RuntimeException("not found id: " + id);
 	}
 
+	public Iterable<I> getKind()
+	{
+		return this.kind;
+	}
 
 	@Override
 	public boolean isTrue(I id)

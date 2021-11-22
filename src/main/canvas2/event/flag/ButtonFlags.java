@@ -3,8 +3,8 @@ package canvas2.event.flag;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import canvas2.core.event.Registerable;
 import canvas2.event.EventManager;
@@ -12,24 +12,24 @@ import canvas2.event.awt.AwtListener;
 import canvas2.util.flag.FixedFlags;
 
 /**
- * キーを監視するクラス。
+ * マウスのボタンを監視するクラス。
  *
  */
-public class KeyFlags extends FixedFlags<Integer>
-	implements Registerable, AwtListener, KeyListener {
+public class ButtonFlags extends FixedFlags<Integer>
+	implements Registerable, AwtListener, MouseListener {
 
 
 
 	/**
-	 * キーの種類を指定して作成。
+	 * マウスのボタンの種類を指定して作成。
 	 */
-	public KeyFlags(Iterable<Integer> keys)
+	public ButtonFlags(Iterable<Integer> keys)
 	{
 		super(keys);
 	}
 
 	/**
-	 * 指定されたキーが押されたか
+	 * 指定されたボタンが押されたか
 	 */
 	public boolean isPressed(Integer key)
 	{
@@ -44,8 +44,8 @@ public class KeyFlags extends FixedFlags<Integer>
 	@Override
 	public void registerTo(EventManager event)
 	{
-		event.add(AWTEvent.class, KeyEvent.KEY_PRESSED, this);
-		event.add(AWTEvent.class, KeyEvent.KEY_RELEASED, this);
+		event.add(AWTEvent.class, MouseEvent.MOUSE_PRESSED, this);
+		event.add(AWTEvent.class, MouseEvent.MOUSE_RELEASED, this);
 		event.add(AWTEvent.class, FocusEvent.FOCUS_LOST, this);
 	}
 
@@ -55,15 +55,15 @@ public class KeyFlags extends FixedFlags<Integer>
 	@Override
 	public void unregisterTo(EventManager event)
 	{
-		event.remove(AWTEvent.class, KeyEvent.KEY_PRESSED, this);
-		event.remove(AWTEvent.class, KeyEvent.KEY_RELEASED, this);
+		event.remove(AWTEvent.class, MouseEvent.MOUSE_PRESSED, this);
+		event.remove(AWTEvent.class, MouseEvent.MOUSE_RELEASED, this);
 		event.remove(AWTEvent.class, FocusEvent.FOCUS_LOST, this);
 	}
 
-	protected void setPressedFlag(KeyEvent e)
+	protected void setPressedFlag(MouseEvent e)
 	{
-		boolean isPressed = (e.getID() == KeyEvent.KEY_PRESSED);
-		this.setFlag(e.getKeyCode(), isPressed, false);
+		boolean isPressed = (e.getID() == MouseEvent.MOUSE_PRESSED);
+		this.setFlag(e.getButton(), isPressed, false);
 	}
 
 	/**
@@ -81,12 +81,12 @@ public class KeyFlags extends FixedFlags<Integer>
 			return;
 		}
 
-		if( !(v instanceof KeyEvent))
+		if( !(v instanceof MouseEvent))
 		{
 			return;
 		}
 
-		KeyEvent e = (KeyEvent) v;
+		MouseEvent e = (MouseEvent) v;
 		this.setPressedFlag(e);
 	}
 
@@ -98,7 +98,7 @@ public class KeyFlags extends FixedFlags<Integer>
 	 */
 	public void registerTo(Component c)
 	{
-		c.addKeyListener(this);
+		c.addMouseListener(this);
 	}
 
 	/**
@@ -106,25 +106,37 @@ public class KeyFlags extends FixedFlags<Integer>
 	 */
 	public void unregisterTo(Component c)
 	{
-		c.removeKeyListener(this);
+		c.addMouseListener(this);
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e)
+	public void mouseClicked(MouseEvent e)
 	{
 		this.setPressedFlag(e);
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e)
+	public void mousePressed(MouseEvent e)
 	{
 		this.setPressedFlag(e);
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e)
+	public void mouseReleased(MouseEvent e)
 	{
 		this.setPressedFlag(e);
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e)
+	{
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e)
+	{
+
 	}
 
 

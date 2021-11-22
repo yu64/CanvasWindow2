@@ -1,12 +1,12 @@
 package canvas2;
 
-import canvas2.sample.MainSample5;
+import canvas2.sample.MainSample2;
 
 public class Main {
 
 	public static void main(String[] args)
 	{
 
-		MainSample5.main(args);
+		MainSample2.main(args);
 	}
 }
