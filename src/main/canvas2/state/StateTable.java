@@ -36,17 +36,17 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		this.table = this.createMultiMap();
 		this.action = this.createMap();
 	}
-	
+
 	protected <A> Set<A> createSet()
 	{
 		return new HashSet<>();
 	}
-	
+
 	protected <A, B> Map<A, B> createMap()
 	{
 		return new HashMap<>();
 	}
-	
+
 	protected <A, B> MultiKeyMap<A, B> createMultiMap()
 	{
 		return new MultiKeyMap<>(2);
@@ -85,10 +85,10 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		{
 			e = this.createEntry(now, next);
 			this.table.put(e, now, next);
-			
+
 			this.nextKind.add(next);
 		}
-		
+
 	}
 
 	/**
@@ -121,30 +121,38 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	}
 
 	/**
+	 * 現在の状態が、指定した状態であるか。
+	 */
+	public boolean equalsState(State s)
+	{
+		return Objects.equals(this.now, s);
+	}
+
+	/**
 	 * 指定の状態へ遷移を試みる。<br>
 	 * 遷移条件を評価し、<u>遷移可能であるとき遷移する。</u>
 	 */
 	public boolean tryMoveState(S next)
 	{
 		Objects.requireNonNull(next);
-		
+
 		if(!this.nextKind.contains(next))
 		{
 			return false;
 		}
-		
+
 		PairEntry<S> e = this.table.get(this.now, next);
 		if(e == null)
 		{
 			return false;
 		}
-		
+
 		BooleanSupplier c = e.getCondition();
 		if(c == null)
 		{
 			return false;
 		}
-		
+
 		if(c.getAsBoolean())
 		{
 			this.setState(next);
@@ -162,7 +170,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	public void moveState(S next, boolean canThrow)
 	{
 		Objects.requireNonNull(next);
-		
+
 		if(!this.nextKind.contains(next))
 		{
 			if(canThrow)
@@ -172,7 +180,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 
 			return;
 		}
-		
+
 		PairEntry<S> e = this.table.get(this.now, next);
 		if(e == null)
 		{
@@ -180,7 +188,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 			{
 				this.throwNotAllowed(next);
 			}
-			
+
 			return;
 		}
 
@@ -189,7 +197,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 
 	protected void throwNotAllowed(S next)
 	{
-		throw new RuntimeException("Not allowed. " + next);
+		throw new RuntimeException("Not allowed. " + this.now + " ==> " + next);
 	}
 
 
@@ -199,29 +207,35 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	public void setState(S next)
 	{
 		Objects.requireNonNull(next);
-		
+
 		PairEntry<S> e = this.table.get(this.now, next);
 		this.now = next;
-		
+
 		if(e != null && e.getChange() != null)
 		{
 			e.getChange().onPostChange(this, this.now, next);
 			this.onPostChange(this.now, next);
 		}
-		
+
 	}
 
-	@Override
-	public void update(float tpf)
+	/**
+	 * 現在の状態に対応した更新処理を行う。
+	 */
+	public void updateState(float tpf)
 	{
-
-		//状態に応じて常に更新
 		Updatable action = this.action.get(this.now);
 		if(action != null)
 		{
 			action.updateAndThrow(tpf);
 		}
-		
+	}
+
+	@Override
+	public void update(float tpf)
+	{
+		this.updateState(tpf);
+
 		//遷移条件に従い、遷移を行う。
 		for(S next : this.nextKind)
 		{
@@ -230,12 +244,12 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 				break;
 			}
 		}
-		
+
 	}
 
 	protected void onPostChange(S prev, S now)
 	{
-		
+
 	}
 
 	@Override
@@ -254,10 +268,10 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		String tab6 = tab1 + "\t\t\t\t\t";
 
 		sb.append(tab2).append("[Allowed Transition]").append(enter);
-		
+
 		for(PairEntry<S> e : this.table.getValues())
 		{
-			
+
 			sb.append(tab3).append(e.getNow()).append(enter);
 			sb.append(tab4).append(e.getNext()).append(enter);
 			sb.append(tab5).append("[Conditions]").append(enter);
@@ -265,11 +279,11 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 			sb.append(tab5).append("[ChangeListener]").append(enter);
 			sb.append(tab6).append(e.getChange()).append(enter);
 			sb.append(enter);
-			
+
 		}
 
 		sb.append(tab2).append("[Update Action]").append(enter);
-		
+
 		for(Entry<S, Updatable> e : this.action.entrySet())
 		{
 			sb.append(tab3).append(e.getKey()).append(enter);
