@@ -1,9 +1,18 @@
 package canvas2.sample;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
+import java.util.HashSet;
 
 import canvas2.App;
+import canvas2.core.event.Listener;
+import canvas2.event.EventManager;
+import canvas2.event.awt.AwtListener;
+import canvas2.util.ListenerHub;
 import canvas2.view.scene.Node;
 
 public class MainSample5 {
@@ -11,8 +20,23 @@ public class MainSample5 {
 
 	public static void main(String[] args)
 	{
+		App app = new App();
 
+		EventManager event = app.getEventManager();
+		event.add(AWTEvent.class, MouseEvent.MOUSE_MOVED, (Listener<EventObject>)(tpf, e) -> {
 
+			System.out.println(e);
+		});
+
+		ListenerHub<AwtListener> hub = new ListenerHub<>(AwtListener.class, new HashSet<>());
+		hub.getListeners().add((tpf, awt) -> System.out.println("KeyEvent 1"));
+		hub.getListeners().add((tpf, awt) -> System.out.println("KeyEvent 2"));
+
+		event.add(AWTEvent.class, KeyEvent.KEY_TYPED, hub.getHandler());
+
+		MainSample2.testColsed(app);
+
+		app.start();
 	}
 
 	public static void testRect(App app, Node node, Dimension size)

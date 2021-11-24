@@ -2,6 +2,7 @@ package canvas2.state;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,29 +13,31 @@ import java.util.function.BooleanSupplier;
 
 import canvas2.core.Updatable;
 import canvas2.core.debug.TextTree;
+import canvas2.core.event.Listener;
 import canvas2.state.obj.State;
 import canvas2.util.MultiKeyMap;
 
 /**
  * 状態遷移表を示す。更新可能。
  */
-public class StateTable<S extends State> implements Updatable, TextTree{
+public class StateTable<S extends State>
+	implements Updatable, Listener<EventObject>, TextTree{
 
 	private S now;
 
 	private Set<S> nextKind;
 	private MultiKeyMap<S, PairEntry<S>> table;
 	private Map<S, Updatable> action;
-
+	private Map<S, EventListener<S>> event;
 
 	public StateTable(S initState)
 	{
-		Objects.requireNonNull(initState);
-
-		this.now = initState;
 		this.nextKind = this.createSet();
 		this.table = this.createMultiMap();
 		this.action = this.createMap();
+		this.event = this.createMap();
+
+		this.reset(initState);
 	}
 
 	protected <A> Set<A> createSet()
@@ -63,7 +66,19 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	}
 
 
+	/**
+	 * すべての設定を初期化します。
+	 */
+	public void reset(S initState)
+	{
+		Objects.requireNonNull(initState);
 
+		this.table.clear();
+		this.nextKind.clear();
+		this.event.clear();
+		this.action.clear();
+		this.now = initState;
+	}
 
 	/**
 	 * 指定した状態かつ、指定した条件が真であるとき、<br>
@@ -114,6 +129,23 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	}
 
 	/**
+	 * 指定した状態で、イベントが発火したとき、処理することを登録する。
+	 */
+	public void setEventListener(S now, EventListener<S> event)
+	{
+		this.event.put(now, event);
+	}
+
+	/**
+	 * 指定した状態で、イベントが発火したとき、遷移を試みるように設定する。<br>
+	 * {@link StateTable#setEventListener(State, EventListener)}を用いている。
+	 */
+	public void setEventByMove(S now)
+	{
+		this.setEventListener(now, (tpf, src, s, obj) -> this.tryMoveState());
+	}
+
+	/**
 	 * 指定の遷移が許可されているか。
 	 */
 	public boolean isAllowed(S now, S next)
@@ -149,6 +181,24 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	public boolean equalsState(S s)
 	{
 		return Objects.equals(this.now, s);
+	}
+
+	/**
+	 * 現在の状態から遷移を試みる。
+	 * 遷移条件を評価し、<u>遷移可能であるとき遷移する。</u>
+	 */
+	public boolean tryMoveState()
+	{
+		//遷移条件に従い、遷移を行う。
+		for(S next : this.nextKind)
+		{
+			if(this.tryMoveState(next))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -249,21 +299,28 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 	public void update(float tpf)
 	{
 		this.updateState(tpf);
-
-		//遷移条件に従い、遷移を行う。
-		for(S next : this.nextKind)
-		{
-			if(this.tryMoveState(next))
-			{
-				break;
-			}
-		}
-
+		this.tryMoveState();
 	}
 
+	/**
+	 * 状態更新後に呼び出されるメソッド
+	 */
 	protected void onPostChange(S prev, S now)
 	{
 
+	}
+
+
+	@Override
+	public void act(float tpf, EventObject e) throws Exception
+	{
+		EventListener<S> h = this.event.get(this.getState());
+		if(h == null)
+		{
+			return;
+		}
+
+		h.act(tpf, this, this.getState(), e);
 	}
 
 	@Override
@@ -308,6 +365,8 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		return sb;
 	}
 
+
+
 	protected static class PairEntry<S extends State> {
 
 		private S now;
@@ -351,6 +410,7 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		{
 			this.change = change;
 		}
+
 	}
 
 	public static interface ChangeListener<S extends State> {
@@ -358,6 +418,12 @@ public class StateTable<S extends State> implements Updatable, TextTree{
 		public void onPostChange(StateTable<S> src, S prev, S now);
 
 	}
+
+	public static interface EventListener<S extends State> {
+
+		public void act(float tpf, StateTable<S> src, S now, EventObject obj);
+	}
+
 
 
 }

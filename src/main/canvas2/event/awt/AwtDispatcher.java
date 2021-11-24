@@ -17,7 +17,7 @@ import canvas2.event.basic.BasicDispatcher;
 public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 
 
-	private Map<Integer, Set<Listener<AWTEvent>>> local;
+	private Map<Integer, Set<Listener<? super AWTEvent>>> local;
 
 	public AwtDispatcher()
 	{
@@ -32,7 +32,7 @@ public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 
 
 	@Override
-	public void addListener(Object exId, Listener<AWTEvent> listener)
+	public void addListener(Object exId, Listener<? super AWTEvent> listener)
 	{
 		if(exId == null)
 		{
@@ -46,7 +46,7 @@ public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 			return;
 		}
 
-		Set<Listener<AWTEvent>> set = this.local.get(exId);
+		Set<Listener<? super AWTEvent>> set = this.local.get(exId);
 		if(set == null)
 		{
 			set = new HashSet<>();
@@ -58,7 +58,7 @@ public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 	}
 
 	@Override
-	public void removeListener(Object exId, Listener<AWTEvent> listener)
+	public void removeListener(Object exId, Listener<? super AWTEvent> listener)
 	{
 		if(exId == null)
 		{
@@ -71,7 +71,7 @@ public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 			return;
 		}
 
-		Set<Listener<AWTEvent>> set = this.local.get(exId);
+		Set<Listener<? super AWTEvent>> set = this.local.get(exId);
 		if(set == null)
 		{
 			return;
@@ -94,13 +94,13 @@ public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 	{
 		super.dispatch(tpf, event);
 
-		Set<Listener<AWTEvent>> set = this.local.get(event.getID());
+		Set<Listener<? super AWTEvent>> set = this.local.get(event.getID());
 		if(set == null)
 		{
 			return;
 		}
 
-		for(Listener<AWTEvent> h : set)
+		for(Listener<? super AWTEvent> h : set)
 		{
 			h.actAndThrow(tpf, event);
 		}
@@ -122,17 +122,17 @@ public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 
 
 		sb.append(tab2).append("[Global]").append(enter);
-		for(Listener<AWTEvent> h : this.getListeners())
+		for(Listener<? super AWTEvent> h : this.getListeners())
 		{
 			sb.append(tab3).append(h).append(enter);
 		}
 
 		sb.append(tab2).append("[Local]").append(enter);
-		for(Entry<Integer, Set<Listener<AWTEvent>>> e : this.local.entrySet())
+		for(Entry<Integer, Set<Listener<? super AWTEvent>>> e : this.local.entrySet())
 		{
 			sb.append(tab3).append(e.getKey()).append(enter);
 
-			for(Listener<AWTEvent> h : e.getValue())
+			for(Listener<? super AWTEvent> h : e.getValue())
 			{
 				sb.append(tab4).append(h).append(enter);
 			}

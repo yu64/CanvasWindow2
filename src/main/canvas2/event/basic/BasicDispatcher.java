@@ -11,7 +11,7 @@ public class BasicDispatcher<E extends EventObject> implements Dispatcher<E>{
 
 
 	private Class<E> event;
-	private Set<Listener<E>> listeners;
+	private Set<Listener<? super E>> listeners;
 
 	public BasicDispatcher(Class<E> event)
 	{
@@ -24,7 +24,7 @@ public class BasicDispatcher<E extends EventObject> implements Dispatcher<E>{
 		return new HashSet<>();
 	}
 
-	protected Set<Listener<E>> getListeners()
+	protected Set<Listener<? super E>> getListeners()
 	{
 		return this.listeners;
 	}
@@ -36,13 +36,13 @@ public class BasicDispatcher<E extends EventObject> implements Dispatcher<E>{
 	}
 
 	@Override
-	public void addListener(Object exId, Listener<E> listener)
+	public void addListener(Object exId, Listener<? super E> listener)
 	{
 		this.listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(Object exId, Listener<E> listener)
+	public void removeListener(Object exId, Listener<? super E> listener)
 	{
 		this.listeners.remove(listener);
 	}
@@ -56,7 +56,7 @@ public class BasicDispatcher<E extends EventObject> implements Dispatcher<E>{
 	@Override
 	public void dispatch(float tpf, E event)
 	{
-		for(Listener<E> h : this.listeners)
+		for(Listener<? super E> h : this.listeners)
 		{
 			h.actAndThrow(tpf, event);
 		}
@@ -72,7 +72,7 @@ public class BasicDispatcher<E extends EventObject> implements Dispatcher<E>{
 
 		sb.append(tab1).append(title).append(enter);
 
-		for(Listener<E> h : this.listeners)
+		for(Listener<? super E> h : this.listeners)
 		{
 			sb.append(tab2).append(h).append(enter);
 		}

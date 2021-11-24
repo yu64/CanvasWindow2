@@ -72,7 +72,7 @@ public class EventManager implements Updatable, TextTree{
 	/**
 	 * 指定のイベントのリスナーを追加する。
 	 */
-	public <E extends EventObject> void add(Class<E> e, Listener<E> listener)
+	public <E extends EventObject> void add(Class<E> e, Listener<? super E> listener)
 	{
 		this.add(e, null, listener);
 	}
@@ -81,7 +81,7 @@ public class EventManager implements Updatable, TextTree{
 	 * 指定のイベントと識別子のリスナーを追加する。<br>
 	 * 識別子の扱い方は、ディスパッチャーによって定義される。
 	 */
-	public <E extends EventObject> void add(Class<E> e, Object exId, Listener<E> listener)
+	public <E extends EventObject> void add(Class<E> e, Object exId, Listener<? super E> listener)
 	{
 		boolean isAdded = false;
 		for(Dispatcher<?> d : this.dispatchers)
@@ -111,7 +111,7 @@ public class EventManager implements Updatable, TextTree{
 	/**
 	 * 指定のイベントのリスナーを削除する。
 	 */
-	public <E extends EventObject> void remove(Class<E> e, Listener<E> listener)
+	public <E extends EventObject> void remove(Class<E> e, Listener<? super E> listener)
 	{
 		this.add(e, null, listener);
 	}
@@ -120,7 +120,7 @@ public class EventManager implements Updatable, TextTree{
 	 * 指定のイベントと識別子のリスナーを削除する。<br>
 	 * 識別子の扱い方は、ディスパッチャーによって定義される。
 	 */
-	public <E extends EventObject> void remove(Class<E> e, Object exId, Listener<E> listener)
+	public <E extends EventObject> void remove(Class<E> e, Object exId, Listener<? super E> listener)
 	{
 		Iterator<Dispatcher<?>> ite = this.dispatchers.iterator();
 		while(ite.hasNext())
