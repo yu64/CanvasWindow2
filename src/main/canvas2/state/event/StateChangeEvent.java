@@ -11,13 +11,15 @@ public class StateChangeEvent extends EventObject{
 	private State prev;
 	private State next;
 	private StateTable<?> src;
+	private boolean isBefore;
 
-	public StateChangeEvent(StateTable<?> source, State prev, State next)
+	public StateChangeEvent(StateTable<?> source, State prev, State next, boolean isBefore)
 	{
 		super(source);
 		this.src = source;
 		this.prev = prev;
 		this.next = next;
+		this.isBefore = isBefore;
 	}
 
 	public StateTable<?> getTable()
@@ -33,6 +35,11 @@ public class StateChangeEvent extends EventObject{
 	public State getNextState()
 	{
 		return this.next;
+	}
+
+	public boolean isBefore()
+	{
+		return isBefore;
 	}
 
 }

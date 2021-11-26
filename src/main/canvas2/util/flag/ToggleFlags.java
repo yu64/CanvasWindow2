@@ -12,7 +12,7 @@ public class ToggleFlags<I> extends BasicFlags<I> implements ChangeListener<I>{
 	}
 
 	@Override
-	public void onChange(Flags<I> src, I id, boolean prev, boolean next)
+	public void onChange(Flags<I> src, I id, boolean prev, boolean next, boolean isBefore)
 	{
 		boolean fromOffToOn = this.fromOffToOn;
 

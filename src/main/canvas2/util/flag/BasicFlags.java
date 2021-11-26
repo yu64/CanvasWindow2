@@ -41,6 +41,11 @@ public class BasicFlags<I> implements Flags<I>{
 			return;
 		}
 
+		if(this.listener != null)
+		{
+			this.listener.onChange(this, id, b, flag, true);
+		}
+
 		if(flag)
 		{
 			this.flag.add(id);
@@ -50,10 +55,9 @@ public class BasicFlags<I> implements Flags<I>{
 			this.flag.remove(id);
 		}
 
-
 		if(this.listener != null)
 		{
-			this.listener.onChange(this, id, b, flag);
+			this.listener.onChange(this, id, b, flag, false);
 		}
 
 	}
@@ -94,10 +98,12 @@ public class BasicFlags<I> implements Flags<I>{
 	}
 
 	@Override
-	public boolean isFlase(I id)
+	public boolean isFalse(I id)
 	{
 		return !this.isTrue(id);
 	}
+
+
 
 
 	@Override
@@ -119,11 +125,37 @@ public class BasicFlags<I> implements Flags<I>{
 	}
 
 
+
+
+
 	@Override
 	public boolean isAllTrue()
 	{
 		return this.getTrueCount() == this.getAllCount();
 	}
+
+	@SafeVarargs
+	@Override
+	public final boolean isAllTrue(I... id)
+	{
+		for(I i : id)
+		{
+			if(!this.isTrue(i))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public final boolean isAllTrueFromArray(I[] id)
+	{
+		return this.isAllTrue(id);
+	}
+
+
 
 	@Override
 	public boolean isAllFalse()
@@ -131,11 +163,36 @@ public class BasicFlags<I> implements Flags<I>{
 		return this.getFalseCount() == this.getAllCount();
 	}
 
+	@SafeVarargs
 	@Override
-	public void setListener(ChangeListener<I> listener)
+	public final boolean isAllFalse(I... id)
+	{
+		for(I i : id)
+		{
+			if(!this.isFalse(i))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public final boolean isAllFalseFromArray(I[] id)
+	{
+		return this.isAllFalse(id);
+	}
+
+
+
+
+	@Override
+	public void setChangeListener(ChangeListener<I> listener)
 	{
 		this.listener = listener;
 	}
+
 
 
 

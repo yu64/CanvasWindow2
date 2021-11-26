@@ -37,7 +37,10 @@ public interface Flags<I> {
 	/**
 	 * 指定した識別子に対応するフラグが無効状態であるか
 	 */
-	public boolean isFlase(I id);
+	public boolean isFalse(I id);
+
+
+
 
 
 	/**
@@ -55,31 +58,59 @@ public interface Flags<I> {
 	 */
 	public int getFalseCount();
 
+
+
+
 	/**
 	 * すべてtrueであるか
 	 */
 	public boolean isAllTrue();
 
 	/**
+	 * 指定した識別子に対応するフラグがすべて有効状態であるか
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean isAllTrue(I... id);
+
+	/**
+	 * 指定した識別子に対応するフラグがすべて有効状態であるか
+	 */
+	public boolean isAllTrueFromArray(I[] id);
+
+	/**
 	 * すべてfalseであるか
 	 */
 	public boolean isAllFalse();
+
+	/**
+	 * 指定した識別子に対応するフラグがすべて無効状態であるか
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean isAllFalse(I... id);
+
+	/**
+	 * 指定した識別子に対応するフラグがすべて無効状態であるか
+	 */
+	public boolean isAllFalseFromArray(I[] id);
+
 
 
 	/**
 	 * フラグ変更時に呼び出されるリスナーを設定する。<br>
 	 * nullであるとき、呼び出されない。
 	 */
-	public void setListener(ChangeListener<I> listener);
+	public void setChangeListener(ChangeListener<I> listener);
 
 
 	/**
-	 * フラグが変更されたときに呼び出されるリスナー
+	 * フラグが変更されたときに呼び出されるリスナー<br>
+	 * メソッド<br>
+	 * {@link ChangeListener#onChange}
 	 */
 	@FunctionalInterface
 	public static interface ChangeListener<I> {
 
-		public void onChange(Flags<I> src, I id, boolean prev, boolean next);
+		public void onChange(Flags<I> src, I id, boolean prev, boolean next, boolean isBefore);
 	}
 
 }

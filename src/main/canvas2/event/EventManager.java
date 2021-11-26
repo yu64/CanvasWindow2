@@ -10,7 +10,6 @@ import java.util.Set;
 import canvas2.core.Updatable;
 import canvas2.core.debug.TextTree;
 import canvas2.core.event.Listener;
-import canvas2.core.event.Registerable;
 import canvas2.core.event.Trigger;
 import canvas2.event.basic.BasicDispatcher;
 import canvas2.util.CastUtil;
@@ -46,8 +45,6 @@ public class EventManager implements Updatable, TextTree{
 	/**
 	 * 指定したイベントを処理する、ディスパッチャーを設定する。<br>
 	 * 設定されていない場合、標準のディスパッチャーが用いられる。<br>
-	 * このメソッドで設定した場合、
-	 * 競合するディスパッチャーが削除され、置き換えられる。
 	 */
 	public <E extends EventObject> void setDispatcher(Class<E> e, Dispatcher<E> in)
 	{
@@ -55,7 +52,7 @@ public class EventManager implements Updatable, TextTree{
 		while(ite.hasNext())
 		{
 			Dispatcher<?> d = ite.next();
-			if(!d.getEventClass().isAssignableFrom(e))
+			if(d.getEventClass() != e)
 			{
 				continue;
 			}

@@ -20,11 +20,11 @@ public class TriggerStateTable<S extends State> extends StateTable<S>{
 	}
 
 	@Override
-	protected void onPostChange(S prev, S now)
+	protected void onChange(S prev, S now, boolean isBefore)
 	{
 		if(this.trigger != null)
 		{
-			this.trigger.dispatch(new StateChangeEvent(this, prev, now));
+			this.trigger.dispatch(new StateChangeEvent(this, prev, now, isBefore));
 		}
 
 	}

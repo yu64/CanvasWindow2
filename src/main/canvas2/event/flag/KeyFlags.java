@@ -6,8 +6,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import canvas2.core.event.Registerable;
 import canvas2.event.EventManager;
+import canvas2.event.Registerable;
 import canvas2.event.awt.AwtListener;
 import canvas2.util.flag.FixedFlags;
 
@@ -60,7 +60,23 @@ public class KeyFlags extends FixedFlags<Integer>
 		event.remove(AWTEvent.class, FocusEvent.FOCUS_LOST, this);
 	}
 
-	protected void setPressedFlag(KeyEvent e)
+	/**
+	 * {@link KeyEvent}からキーのフラグを更新します。
+	 */
+	public void setPressedFlag(AWTEvent e)
+	{
+		if( !(e instanceof KeyEvent))
+		{
+			return;
+		}
+
+		this.setPressedFlag(((KeyEvent) e));
+	}
+
+	/**
+	 * {@link KeyEvent}からキーのフラグを更新します。
+	 */
+	public void setPressedFlag(KeyEvent e)
 	{
 		boolean isPressed = (e.getID() == KeyEvent.KEY_PRESSED);
 		this.setFlag(e.getKeyCode(), isPressed, false);
@@ -81,13 +97,7 @@ public class KeyFlags extends FixedFlags<Integer>
 			return;
 		}
 
-		if( !(v instanceof KeyEvent))
-		{
-			return;
-		}
-
-		KeyEvent e = (KeyEvent) v;
-		this.setPressedFlag(e);
+		this.setPressedFlag(v);
 	}
 
 

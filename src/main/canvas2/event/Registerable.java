@@ -1,6 +1,4 @@
-package canvas2.core.event;
-
-import canvas2.event.EventManager;
+package canvas2.event;
 
 public interface Registerable {
 

@@ -61,7 +61,7 @@ public class FixedFlags<I> extends BasicFlags<I>{
 	}
 
 	@Override
-	public boolean isFlase(I id)
+	public boolean isFalse(I id)
 	{
 		if(!this.kind.contains(id))
 		{
@@ -69,7 +69,7 @@ public class FixedFlags<I> extends BasicFlags<I>{
 			return false;
 		}
 
-		return super.isFlase(id);
+		return super.isFalse(id);
 	}
 
 	@Override
