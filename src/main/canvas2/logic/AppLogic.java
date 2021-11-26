@@ -22,36 +22,36 @@ public class AppLogic implements TextTree{
 
 	private TpfMeasurer tpf = this.createTpf(100);
 	private FpsMeasurer fps = this.createFps();
-	
-	
+
+
 
 	public AppLogic()
 	{
 		this.objSet = this.createSet();
 	}
-	
+
 	protected Set<Updatable> createSet()
 	{
 		return new CopyOnWriteArraySet<>();
 	}
-	
+
 	protected Thread createThread(Runnable r)
 	{
 		return new Thread(r);
 	}
-	
+
 	protected TpfMeasurer createTpf(long tps)
 	{
 		return new TpfMeasurer(tps);
 	}
-	
+
 	protected FpsMeasurer createFps()
 	{
 		return new FpsMeasurer();
 	}
-	
-	
-	
+
+
+
 
 	/**
 	 * 更新が必要なオブジェクトを追加します。
@@ -76,7 +76,7 @@ public class AppLogic implements TextTree{
 	{
 		this.objSet.clear();
 	}
-	
+
 	/**
 	 * Fpsを取得する。<br>
 	 * 適切に扱うには、更新されている必要がある。
@@ -85,7 +85,7 @@ public class AppLogic implements TextTree{
 	{
 		return this.fps.getFps();
 	}
-	
+
 	/**
 	 * Tpfを取得する。<br>
 	 * 適切に扱うには、更新されている必要がある。
@@ -94,7 +94,7 @@ public class AppLogic implements TextTree{
 	{
 		return this.tpf.getTpf();
 	}
-	
+
 	/**
 	 * Tpfの目標Tickを設定する。
 	 */
@@ -102,7 +102,23 @@ public class AppLogic implements TextTree{
 	{
 		this.tpf.setTarget(tickPerSecond);
 	}
-	
+
+	/**
+	 * Fpsの固定値を設定する。
+	 */
+	public void setTargetFps(float framePerSecond)
+	{
+		this.fps.enableFixedFps(framePerSecond);
+	}
+
+	/**
+	 * Fpsの固定値を削除する。
+	 */
+	public void resetTargetFps()
+	{
+		this.fps.disableFixedFps();
+	}
+
 
 	/**
 	 * 更新を開始します。
@@ -156,11 +172,11 @@ public class AppLogic implements TextTree{
 		String enter = System.lineSeparator();
 		String tab1 = "\t".repeat(nest);
 		String tab2 = tab1 + "\t";
-		
+
 		String title = this.getClass().getSimpleName();
 		sb.append(tab1).append(title).append(enter);
 
-		
+
 		for(Updatable obj : this.objSet)
 		{
 			sb.append(tab2).append(obj).append(enter);

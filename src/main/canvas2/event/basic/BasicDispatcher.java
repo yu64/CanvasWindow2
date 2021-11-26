@@ -24,7 +24,7 @@ public class BasicDispatcher<E extends EventObject> implements Dispatcher<E>{
 		return new HashSet<>();
 	}
 
-	protected Set<Listener<? super E>> getListeners()
+	public Set<Listener<? super E>> getListeners()
 	{
 		return this.listeners;
 	}
