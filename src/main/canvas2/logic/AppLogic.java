@@ -162,7 +162,7 @@ public class AppLogic implements TextTree{
 	{
 		for(Updatable obj : this.objSet)
 		{
-			obj.updateAndThrow(tpf);
+			obj.updateOrThrow(tpf);
 		}
 	}
 

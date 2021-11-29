@@ -1,4 +1,4 @@
-package canvas2.sample;
+package canvas2.app.sample;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
@@ -11,7 +11,7 @@ import java.util.ArrayDeque;
 import java.util.BitSet;
 import java.util.Deque;
 
-import canvas2.App;
+import canvas2.app.App;
 import canvas2.event.EventManager;
 import canvas2.logic.AppLogic;
 import canvas2.util.Pool;

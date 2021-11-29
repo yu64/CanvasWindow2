@@ -1,4 +1,4 @@
-package canvas2.sample;
+package canvas2.app.sample;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;

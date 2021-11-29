@@ -1,4 +1,4 @@
-package canvas2.sample;
+package canvas2.app.sample;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.HashSet;
 
-import canvas2.App;
+import canvas2.app.App;
 import canvas2.core.event.Listener;
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtListener;

@@ -1,4 +1,4 @@
-package canvas2.sample;
+package canvas2.app.sample;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-import canvas2.App;
+import canvas2.app.App;
 import canvas2.event.EventManager;
 import canvas2.event.flag.KeyFlags;
 import canvas2.util.TransformUtil;
@@ -38,6 +38,9 @@ public class MainSample1 {
 
 
 
+	/**
+	 * 座標軸を描画
+	 */
 	public static void testAxis(App app, Node node)
 	{
 		//座標軸の描画
@@ -53,6 +56,11 @@ public class MainSample1 {
 		});
 	}
 
+	/**
+	 * キーによるズーム<br>
+	 * キー: <br>
+	 * UP, DOWN
+	 */
 	public static void testZoom(App app, Node node)
 	{
 		node.add(g2 -> {
@@ -81,6 +89,11 @@ public class MainSample1 {
 
 	}
 
+	/**
+	 * キーによるスクロール<br>
+	 * キー: <br>
+	 * A, D, W, S
+	 */
 	public static void testMove(App app, Node node)
 	{
 		EventManager event = app.getEventManager();

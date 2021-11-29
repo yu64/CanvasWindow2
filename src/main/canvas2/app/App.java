@@ -1,4 +1,4 @@
-package canvas2;
+package canvas2.app;
 
 import java.awt.AWTEvent;
 import java.awt.Toolkit;
@@ -19,7 +19,6 @@ import canvas2.view.scene.Node;
  * ここから使い始めることを推奨する。<br>
  */
 
-@SuppressWarnings("exports")
 public class App implements AutoCloseable, TextTree{
 
 	private Node root;

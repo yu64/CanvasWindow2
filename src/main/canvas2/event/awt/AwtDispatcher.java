@@ -102,7 +102,7 @@ public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 
 		for(Listener<? super AWTEvent> h : set)
 		{
-			h.actAndThrow(tpf, event);
+			h.actOrThrow(tpf, event);
 		}
 	}
 

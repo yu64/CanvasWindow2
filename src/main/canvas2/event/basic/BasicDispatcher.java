@@ -58,7 +58,7 @@ public class BasicDispatcher<E extends EventObject> implements Dispatcher<E>{
 	{
 		for(Listener<? super E> h : this.listeners)
 		{
-			h.actAndThrow(tpf, event);
+			h.actOrThrow(tpf, event);
 		}
 	}
 

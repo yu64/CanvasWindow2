@@ -6,7 +6,7 @@ public interface Updatable extends AppObject{
 	public void update(float tpf) throws Exception;
 
 
-	public default void updateAndThrow(float tpf)
+	public default void updateOrThrow(float tpf)
 	{
 		try
 		{

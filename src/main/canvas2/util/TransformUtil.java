@@ -11,7 +11,7 @@ public final class TransformUtil {
 
 	private TransformUtil()
 	{
-		
+
 	}
 
 	public static Point2D inverseTransform(AffineTransform t, Point2D in, Point2D out)
@@ -48,11 +48,16 @@ public final class TransformUtil {
 
 	public static void scale(AffineTransform t, double scale, double x, double y)
 	{
+		TransformUtil.scale(t, scale, scale, x, y);
+	}
+
+	public static void scale(AffineTransform t, double scaleX, double scaleY, double x, double y)
+	{
 		//現在の中心点
 		double startX = x * t.getScaleX();
 		double startY = y * t.getScaleY();
 
-		t.scale(scale, scale);
+		t.scale(scaleX, scaleY);
 
 		//スケーリング後の中心点
 		double appliedX = x * t.getScaleX();

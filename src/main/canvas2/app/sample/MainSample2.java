@@ -1,4 +1,4 @@
-package canvas2.sample;
+package canvas2.app.sample;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
@@ -10,14 +10,13 @@ import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-import canvas2.App;
+import canvas2.app.App;
 import canvas2.core.debug.TextTree;
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtListener;
 import canvas2.event.flag.KeyFlags;
 import canvas2.state.StateTable;
 import canvas2.state.obj.StateImpl;
-import canvas2.util.TransformUtil;
 import canvas2.view.scene.Node;
 import canvas2.view.scene.TrackingPane;
 
@@ -25,9 +24,8 @@ public class MainSample2 {
 
 	public static void main(String[] args)
 	{
-		//最初に呼び出すべきもの。
+		//最初に呼び出すもの。
 		App app = new App();
-		app.start();
 
 		Node scroll = new Node("scrollNode");
 		app.getRootNode().add(scroll);
@@ -39,21 +37,26 @@ public class MainSample2 {
 		app.getRootNode().add(overray);
 
 		Point pos = MainSample2.testMovedCircle(app, area);
-		MainSample2.testAxis(app, area);
-		MainSample2.testZoom(app, scroll);
-		MainSample2.testMove(app, scroll);
+		MainSample1.testAxis(app, area);
+		MainSample1.testZoom(app, scroll);
+		MainSample1.testMove(app, scroll);
 		MainSample2.testColsed(app);
 		MainSample2.testState(app, overray);
 		MainSample2.testMouse(app, area, scroll);
 		MainSample2.testSubFrame(app, area, overray, pos);
 
+
+		System.out.println(app.getClass().getSimpleName() + " TextTree");
 		System.out.println(TextTree.getText(app));
 
-
+		//最後に呼び出すもの
+		app.start();
 	}
 
 
-
+	/**
+	 * 回る円を描画
+	 */
 	public static Point testMovedCircle(App app, Node node)
 	{
 
@@ -90,100 +93,12 @@ public class MainSample2 {
 		return pos;
 	}
 
-	public static void testAxis(App app, Node node)
-	{
-		//座標軸の描画
-		node.add(g2 -> {
 
-			g2.setColor(Color.RED);
-			g2.drawLine(-1000, 0, 1000, 0);
-
-			g2.setColor(Color.BLUE);
-			g2.drawLine(0, -1000, 0, 1000);
-
-
-		});
-	}
-
-	public static void testZoom(App app, Node node)
-	{
-		node.add(g2 -> {
-
-			g2.setColor(Color.DARK_GRAY);
-			g2.drawOval(480 - 10, 270 - 10, 20, 20);
-
-			g2.drawString(node.getName() + ": (480, 270)", 480, 270 + 30);
-		});
-
-		EventManager event = app.getEventManager();
-		event.add(AWTEvent.class, KeyEvent.KEY_RELEASED, (tpf, v) -> {
-
-			KeyEvent e = (KeyEvent) v;
-
-			if(e.getKeyCode() == KeyEvent.VK_UP)
-			{
-				TransformUtil.scale(node.getTransform(), 0.5F, 480, 270);
-			}
-
-			if(e.getKeyCode() == KeyEvent.VK_DOWN)
-			{
-				TransformUtil.scale(node.getTransform(), 1 / 0.5F, 480, 270);
-			}
-		});
-
-	}
-
-	public static void testMove(App app, Node node)
-	{
-		EventManager event = app.getEventManager();
-
-		Set<Integer> keys = new HashSet<>();
-		keys.add(KeyEvent.VK_A);
-		keys.add(KeyEvent.VK_D);
-		keys.add(KeyEvent.VK_W);
-		keys.add(KeyEvent.VK_S);
-
-		KeyFlags flag = new KeyFlags(keys);
-		flag.registerTo(event);
-
-		app.getLogic().add(tpf -> {
-
-			float speed = 1.0F * tpf;
-
-			float x = 0.0F;
-			float y = 0.0F;
-
-			if(flag.isPressed(KeyEvent.VK_A))
-			{
-				x += speed;
-			}
-
-			if(flag.isPressed(KeyEvent.VK_D))
-			{
-				x += -speed;
-			}
-
-			if(flag.isPressed(KeyEvent.VK_W))
-			{
-				y += speed;
-			}
-
-			if(flag.isPressed(KeyEvent.VK_S))
-			{
-				y += -speed;
-			}
-
-			node.getTransform().translate(x, y);
-
-		});
-
-		node.add(g2 -> {
-
-			g2.setColor(Color.BLUE);
-			g2.drawString(node.getName() + ": " + node.getTransform(), 50, 70);
-		});
-	}
-
+	/**
+	 * キーによってアプリケーションを閉じる。<br>
+	 * キー: <br>
+	 * ESC
+	 */
 	public static void testColsed(App app)
 	{
 		EventManager event = app.getEventManager();
@@ -207,6 +122,11 @@ public class MainSample2 {
 
 	}
 
+	/**
+	 * 状態変化を行う。<br>
+	 * キー: <br>
+	 * 1, 2, 3
+	 */
 	public static void testState(App app, Node node)
 	{
 		EventManager event = app.getEventManager();
@@ -252,10 +172,14 @@ public class MainSample2 {
 
 		});
 
+		System.out.println(table.getClass().getSimpleName() + " TextTree");
 		System.out.println(TextTree.getText(table));
 	}
 
 
+	/**
+	 * マウスで左クリックした位置に円を描画する。<br>
+	 */
 	public static void testMouse(App app, Node area, Node scroll)
 	{
 		EventManager event = app.getEventManager();
@@ -284,6 +208,9 @@ public class MainSample2 {
 
 	}
 
+	/**
+	 * 指定した座標を追跡するサブウィンドウを描画する。
+	 */
 	public static void testSubFrame(App app, Node area, Node overray, Point pos)
 	{
 		TrackingPane sub = new TrackingPane("subFrame", "sub", area);

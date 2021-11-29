@@ -446,7 +446,7 @@ public class StateTable<S extends State>
 			return;
 		}
 
-		action.updateAndThrow(tpf);
+		action.updateOrThrow(tpf);
 	}
 
 	@Override
