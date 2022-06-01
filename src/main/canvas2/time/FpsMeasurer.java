@@ -9,6 +9,9 @@ import canvas2.util.TimeUtil;
  */
 public class FpsMeasurer implements Runnable{
 
+	/**
+	 * Unit(指定された時間の単位)で一秒を示す値。
+	 */
 	private final float ONE_SECOND;
 	{
 		this.ONE_SECOND = (float)TimeUtil.convert(
@@ -65,9 +68,11 @@ public class FpsMeasurer implements Runnable{
 	public void run()
 	{
 		long now = this.clock.getTime(this.getUnit());
+		
+		//1フレームにUnit(指定された時間の単位)がどのくらい存在するか
 		long unitPerFrame = now - this.prev;
 		
-		//n[時間単位]に1フレームが1秒にいくつ存在するか。
+		//1秒にフレームがどのくらい存在するか
 		float framePerSecond = (float)this.ONE_SECOND / unitPerFrame;
 
 		//Fpsを設定。
@@ -85,9 +90,8 @@ public class FpsMeasurer implements Runnable{
 		long fixedUpf = this.fixedUnitPerFrame;
 		long upf = unitPerFrame;
 		
-		//Npfが小さいと、Fpsは大きくなる。
-		//固定Upfが小数であると仮定した場合、
-		//現在のUpfの精度によって、この条件は、真にならない。
+		//Upfが小さい(動作が早い)と、Fpsは大きくなる。
+		//つまり、Upfが小さいときは、待機する必要がある。
 		if(upf < fixedUpf)
 		{
 			//差分、待機する。

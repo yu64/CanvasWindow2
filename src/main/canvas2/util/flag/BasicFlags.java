@@ -1,12 +1,11 @@
 package canvas2.util.flag;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * フラグを管理するクラス。
+ * フラグの種類は、自由に追加できる。
  *
  */
 public class BasicFlags<I> implements Flags<I>{
@@ -18,11 +17,6 @@ public class BasicFlags<I> implements Flags<I>{
 	public BasicFlags()
 	{
 		this.flag = this.createSet();
-	}
-
-	protected Map<I, Boolean> createMap()
-	{
-		return new HashMap<>();
 	}
 
 	protected Set<I> createSet()

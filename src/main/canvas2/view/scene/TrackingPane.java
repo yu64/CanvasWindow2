@@ -5,11 +5,10 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 import canvas2.util.TransformUtil;
-import canvas2.view.AppWindow;
 
 /**
  * 指定の{@link Node}を指定の範囲に描画するクラス。<br>
- * {@link AppWindow}のルートノード配下に登録すること。
+ * ノード配下に登録すること。
  */
 public class TrackingPane extends Pane{
 

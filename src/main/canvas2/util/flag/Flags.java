@@ -1,5 +1,8 @@
 package canvas2.util.flag;
 
+/**
+ * フラグを管理するクラスのインターフェイス
+ */
 public interface Flags<I> {
 
 

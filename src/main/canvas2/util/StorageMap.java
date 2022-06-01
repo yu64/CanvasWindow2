@@ -1,9 +1,14 @@
 package canvas2.util;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+/**
+ * キーの種類に制限がかけられ、変更時にリスナーを実行できるマップ。
+ * {@link Collection}を継承していない。
+ */
 public class StorageMap<K> {
 
 	private Map<K, Entry> data = this.createMap();

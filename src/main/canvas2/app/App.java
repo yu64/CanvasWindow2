@@ -17,6 +17,12 @@ import canvas2.view.scene.Node;
  * 主に必要な要素を集めたクラス。<br>
  * ルートノード、ウィンドウ、ロジック、イベントを含む。<br>
  * ここから使い始めることを推奨する。<br>
+ * 
+ * @see {@link Node}
+ * @see {@link AppWindow}
+ * @see {@link AppLogic}
+ * @see {@link EventManager}
+ * 
  */
 
 public class App implements AutoCloseable, TextTree{
@@ -47,12 +53,12 @@ public class App implements AutoCloseable, TextTree{
 		this.setup();
 	}
 
-	protected Updatable convartWindowUpdatable(Updatable obj)
+	protected Updatable wrapWindowUpdatable(AppWindow obj)
 	{
 		return new TimeInterval(16, obj);
 	}
 
-	protected Updatable convartEventUpdatable(Updatable obj)
+	protected Updatable wrapEventUpdatable(EventManager obj)
 	{
 		return obj;
 	}
@@ -79,10 +85,10 @@ public class App implements AutoCloseable, TextTree{
 		this.init();
 
 		//描画更新のために、登録
-		this.logic.add(this.convartWindowUpdatable(this.window));
+		this.logic.add(this.wrapWindowUpdatable(this.window));
 
 		//イベント実行のために、登録。
-		this.logic.add(this.convartEventUpdatable(this.event));
+		this.logic.add(this.wrapEventUpdatable(this.event));
 
 		//ウィンドウのイベントを扱うディスパッチャーを登録。
 		this.event.setDispatcher(AWTEvent.class, new AwtDispatcher());

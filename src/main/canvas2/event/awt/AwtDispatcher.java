@@ -34,13 +34,14 @@ public class AwtDispatcher extends BasicDispatcher<AWTEvent>{
 	@Override
 	public void addListener(Object exId, Listener<? super AWTEvent> listener)
 	{
+		//AWTイベントIDが存在しない場合は、全体に適用
 		if(exId == null)
 		{
 			super.addListener(exId, listener);
 			return;
 		}
 
-
+		//型が異なる場合は、追加しない。
 		if( !(exId instanceof Integer))
 		{
 			return;

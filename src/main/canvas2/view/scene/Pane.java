@@ -6,11 +6,10 @@ import java.awt.geom.AffineTransform;
 
 import canvas2.core.Drawable;
 import canvas2.util.CastUtil;
-import canvas2.view.AppWindow;
 
 /**
  * 指定の範囲に描画するクラス。<br>
- * {@link AppWindow}のルートノード配下に登録すること。<br>
+ * ノード配下に登録すること。<br>
  * 外側と内側に分かれている<br>
  * スクロールなどを行う場合、このクラスを使用し、内側に適用することを推奨する。<br>
  */

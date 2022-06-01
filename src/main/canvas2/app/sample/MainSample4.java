@@ -20,7 +20,7 @@ public class MainSample4 {
 	{
 		App app = new App();
 
-		MainSample2.testColsed(app);
+		MainSample1.testColsed(app);
 
 		Node leftRoot = new Node("leftRoot");
 		Node rightRoot = new Node("rightRoot");

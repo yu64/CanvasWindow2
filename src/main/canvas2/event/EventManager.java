@@ -14,6 +14,11 @@ import canvas2.core.event.Trigger;
 import canvas2.event.basic.BasicDispatcher;
 import canvas2.util.CastUtil;
 
+/**
+ * イベントを管理する。<br>
+ * イベントの種類、イベントに対応するリスナーの登録、
+ * リスナーを判別するディスパッチャーの登録など
+ */
 public class EventManager implements Updatable, TextTree{
 
 	private Queue<EventObject> queue;
@@ -75,7 +80,7 @@ public class EventManager implements Updatable, TextTree{
 	}
 
 	/**
-	 * 指定のイベントと識別子のリスナーを追加する。<br>
+	 * 指定のイベントと識別子とリスナーを追加する。<br>
 	 * 識別子の扱い方は、ディスパッチャーによって定義される。
 	 */
 	public <E extends EventObject> void add(Class<E> e, Object exId, Listener<? super E> listener)

@@ -12,6 +12,7 @@ import java.util.BitSet;
 import java.util.Deque;
 
 import canvas2.app.App;
+import canvas2.core.debug.TextTree;
 import canvas2.event.EventManager;
 import canvas2.logic.AppLogic;
 import canvas2.util.Pool;
@@ -35,7 +36,6 @@ public class MainSample3 {
 				1,
 				Integer.MAX_VALUE
 				);
-
 
 
 
@@ -189,6 +189,8 @@ public class MainSample3 {
 		});
 
 		app.start();
+		
+		System.out.println(TextTree.getText(app));
 	}
 
 	private static class Entity

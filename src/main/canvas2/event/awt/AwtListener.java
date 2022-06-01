@@ -12,6 +12,7 @@ import canvas2.core.event.Listener;
  *
  *
  */
+@FunctionalInterface
 public interface AwtListener extends Listener<AWTEvent>{
 
 

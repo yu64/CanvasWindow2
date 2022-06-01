@@ -2,9 +2,13 @@ package canvas2.event;
 
 import java.util.EventObject;
 
+import canvas2.core.debug.TextTree;
 import canvas2.core.event.Listener;
 
-public interface Dispatcher<E extends EventObject> {
+/**
+ * 指定された型のイベントをリスナーに振り分ける。
+ */
+public interface Dispatcher<E extends EventObject> extends TextTree{
 
 
 	public Class<E> getEventClass();
@@ -15,6 +19,5 @@ public interface Dispatcher<E extends EventObject> {
 
 	public void dispatch(float tpf, E event);
 
-	public StringBuilder createTreeText(StringBuilder sb, int nest);
 
 }

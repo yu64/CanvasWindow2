@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 
 /**
  * オブジェクトプーリングの機能を提供する。
- *
  */
 public class Pool {
 
@@ -25,6 +24,13 @@ public class Pool {
 	{
 		this.entrys = this.createEntryMap();
 	}
+	
+	protected Map<Class<?>, PoolEntry<?>> createEntryMap()
+	{
+		return new HashMap<>();
+	}
+	
+	
 
 	/**
 	 * プーリングするクラスを登録する。
@@ -77,6 +83,11 @@ public class Pool {
 	 */
 	public <T> void free(T obj)
 	{
+		if(obj == null)
+		{
+			return;
+		}
+		
 		Class<T> clazz = CastUtil.getClass(obj);
 		PoolEntry<T> e = CastUtil.cast(this.entrys.get(clazz));
 		if(e == null)
@@ -91,11 +102,14 @@ public class Pool {
 	 * closeするとオブジェクトを解放する{@link AutoCloseable}を作成する。
 	 *
 	 */
-	public <T> AutoCloseable getReleaseCloseable(T obj)
+	public <T> AutoCloseable createReleaseCloseable(T obj)
 	{
 		return () -> this.free(obj);
 	}
 
+	/**
+	 * 型に対応したプールを取得する。
+	 */
 	@SafeVarargs
 	public final <T> PoolEntry<T> getEntry(T... empty)
 	{
@@ -103,16 +117,16 @@ public class Pool {
 		return this.getEntry(clazz);
 	}
 
+	/**
+	 * 型に対応したプールを取得する。
+	 */
 	public <T> PoolEntry<T> getEntry(Class<T> clazz)
 	{
 		return CastUtil.cast(this.entrys.get(clazz));
 	}
 
 
-	protected Map<Class<?>, PoolEntry<?>> createEntryMap()
-	{
-		return new HashMap<>();
-	}
+
 
 
 
@@ -125,7 +139,15 @@ public class Pool {
 		private Class<T> clazz;
 		private Supplier<T> factory;
 		private Consumer<T> initializer;
+		
+		/**
+		 * 使われていないオブジェクト
+		 */
 		private Deque<T> unused;
+		
+		/**
+		 * 使われているオブジェクト
+		 */
 		private Set<T> used;
 		private int limit;
 
@@ -141,7 +163,7 @@ public class Pool {
 
 			for(int i = 0; i < margin; i++)
 			{
-				this.addMargin();
+				this.addMarginObject();
 			}
 		}
 
@@ -155,11 +177,17 @@ public class Pool {
 			return Collections.newSetFromMap(new IdentityHashMap<T, Boolean>());
 		}
 
+		/**
+		 * 扱う型を取得する。
+		 */
 		public Class<T> getType()
 		{
 			return this.clazz;
 		}
 
+		/**
+		 * プーリングされたオブジェクトを取得する。
+		 */
 		public T obtain()
 		{
 			T obj = this.unused.pollFirst();
@@ -174,6 +202,9 @@ public class Pool {
 			return obj;
 		}
 
+		/**
+		 * オブジェクトを解放する。
+		 */
 		public void free(T obj)
 		{
 			String name = obj.getClass().getSimpleName();
@@ -300,7 +331,7 @@ public class Pool {
 			return this.limit <= this.getSize();
 		}
 
-		protected void addMargin()
+		protected void addMarginObject()
 		{
 			if(this.isFull())
 			{

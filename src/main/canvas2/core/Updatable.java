@@ -1,7 +1,10 @@
 package canvas2.core;
 
+/**
+ * 更新可能なもの。関数型インターフェイスとして使える。<br>
+ */
 @FunctionalInterface
-public interface Updatable extends AppObject{
+public interface Updatable extends AppObject {
 
 	public void update(float tpf) throws Exception;
 

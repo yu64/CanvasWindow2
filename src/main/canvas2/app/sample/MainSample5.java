@@ -34,7 +34,7 @@ public class MainSample5 {
 
 		event.add(AWTEvent.class, KeyEvent.KEY_TYPED, hub.getHandler());
 
-		MainSample2.testColsed(app);
+		MainSample1.testColsed(app);
 
 		app.start();
 	}

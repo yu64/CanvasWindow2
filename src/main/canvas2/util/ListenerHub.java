@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
 
+/**
+ * 同じクラスのインスタンスをまとめ、一つとして扱うクラス。
+ */
 public class ListenerHub<T> {
 
 
@@ -39,9 +42,7 @@ public class ListenerHub<T> {
 		return this.listeners;
 	}
 
-	protected class Handler implements InvocationHandler
-	{
-
+	protected class Handler implements InvocationHandler {
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 		{

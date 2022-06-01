@@ -6,6 +6,9 @@ import java.awt.event.AWTEventListener;
 import canvas2.core.event.Trigger;
 import canvas2.event.EventManager;
 
+/**
+ * AWTEventを取得し、{@link EventManager}に中継する
+ */
 public class AwtConnector implements AWTEventListener{
 
 	private Trigger trigger;

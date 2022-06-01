@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
+/**
+ * フラグの種類が決まっている{@link BasicFlags}
+ */
 public class FixedFlags<I> extends BasicFlags<I>{
 
 	private Set<I> kind;

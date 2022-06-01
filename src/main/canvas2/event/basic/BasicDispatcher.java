@@ -6,7 +6,12 @@ import java.util.Set;
 
 import canvas2.core.event.Listener;
 import canvas2.event.Dispatcher;
+import canvas2.event.EventManager;
 
+/**
+ * 標準のディスパッチャー
+ * @sse {@link EventManager#setDispatcher(Class, Dispatcher)}
+ */
 public class BasicDispatcher<E extends EventObject> implements Dispatcher<E>{
 
 

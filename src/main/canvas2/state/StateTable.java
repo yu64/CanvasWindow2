@@ -22,12 +22,29 @@ import canvas2.util.MultiKeyMap;
 public class StateTable<S extends State>
 	implements Updatable, Listener<EventObject>, TextTree{
 
+	/**
+	 * 現在の状態
+	 */
 	private S now;
 
+	/**
+	 * 全体で変更があったときに呼び出されるリスナー
+	 */
 	private ChangeListener<S> global;
 
+	/**
+	 * 遷移先になっている状態の一覧
+	 */
 	private Set<S> nextKind;
+	
+	/**
+	 * 遷移情報
+	 */
 	private MultiKeyMap<S, PairEntry<S>> table;
+	
+	/**
+	 * 状態の情報
+	 */
 	private Map<S, StateEntry<S>> info;
 
 
@@ -171,14 +188,18 @@ public class StateTable<S extends State>
 	 */
 	public void allow(S now, S next)
 	{
+		//遷移情報があるか(許可されているか)取得
 		PairEntry<S> e = this.table.get(now, next);
 		if(e == null)
 		{
+			//ない場合、作成
 			e = this.createEntry(now, next);
 			this.table.put(e, now, next);
 
 			this.getStateEntry(now, true);
 			this.getStateEntry(next, true);
+			
+			//遷移先になった状態を登録
 			this.nextKind.add(next);
 		}
 	}
@@ -190,8 +211,10 @@ public class StateTable<S extends State>
 	 */
 	public void set(S now, S next, BooleanSupplier condition)
 	{
+		//遷移を許可する
 		this.allow(now, next);
 
+		//遷移条件を登録
 		PairEntry<S> e = this.table.get(now, next);
 		e.setCondition(condition);
 	}
@@ -201,11 +224,13 @@ public class StateTable<S extends State>
 	 * 処理することを登録する。<br>
 	 * {@link StateTable#allow}が実行される。<br>
 	 */
-	public void setChange(S now, S next, ChangeListener<S> change)
+	public void setChangeListener(S now, S next, ChangeListener<S> change)
 	{
+		//遷移を許可
 		this.allow(now, next);
+		
+		//リスナーを登録
 		PairEntry<S> e = this.table.get(now, next);
-
 		e.setChangeListener(change);
 	}
 
@@ -214,11 +239,13 @@ public class StateTable<S extends State>
 	 */
 	public boolean isAllowed(S now, S next)
 	{
+		//遷移先に存在しない場合、常に許可されていない
 		if(!this.nextKind.contains(next))
 		{
 			return false;
 		}
 
+		//遷移情報がない場合、許可されていない
 		PairEntry<S> e = this.table.get(now, next);
 		if(e == null)
 		{
@@ -276,41 +303,46 @@ public class StateTable<S extends State>
 	{
 		Objects.requireNonNull(next);
 
+		//遷移先に存在しない場合、どうやっても遷移不可能
 		if(!this.nextKind.contains(next))
 		{
 			return false;
 		}
 
+		//遷移情報がない場合、遷移不可能
 		PairEntry<S> e = this.table.get(this.now, next);
 		if(e == null)
 		{
 			return false;
 		}
 
+		//遷移条件がない場合、遷移不可能
 		BooleanSupplier c = e.getCondition();
 		if(c == null)
 		{
 			return false;
 		}
 
-		if(c.getAsBoolean())
+		//遷移条件を満たしていない場合、遷移不可能
+		if(!c.getAsBoolean())
 		{
-			this.setState(next);
-			return true;
+			return false;
 		}
-
-		return false;
+		
+		this.setState(next);
+		return true;
 	}
 
 	/**
 	 * 遷移条件に関係なく遷移する。<br>
-	 * ただし、遷移が登録されていないければならない。<br>
+	 * ただし、遷移が登録(許可)されていないければならない。<br>
 	 * 登録されていない場合、遷移しない。
 	 */
 	public void moveState(S next, boolean canThrow)
 	{
 		Objects.requireNonNull(next);
 
+		//許可されていない場合は、遷移不可能
 		if(!this.isAllowed(this.now, next))
 		{
 			if(canThrow)
@@ -323,6 +355,9 @@ public class StateTable<S extends State>
 		this.setState(next);
 	}
 
+	/**
+	 * 許可されていない遷移を行ったときの例外を投げる
+	 */
 	protected void throwNotAllowed(S next)
 	{
 		throw new RuntimeException("Not allowed. " + this.now + " ==> " + next);
@@ -332,9 +367,9 @@ public class StateTable<S extends State>
 	/**
 	 * 遷移条件に関係なく強制的に状態を変更する。<br>
 	 * リスナーは、実行される。<br>
-	 * {@link ChangeListener}<br>
-	 * {@link LeaveListener}<br>
-	 * {@link EnterListener}<br>
+	 * @see {@link ChangeListener}<br>
+	 * @see {@link LeaveListener}<br>
+	 * @see {@link EnterListener}<br>
 	 */
 	public void setState(S next)
 	{
@@ -344,9 +379,9 @@ public class StateTable<S extends State>
 	/**
 	 * 遷移条件に関係なく強制的に状態を変更する。<br>
 	 * リスナーの実行が可能。<br>
-	 * {@link ChangeListener}<br>
-	 * {@link LeaveListener}<br>
-	 * {@link EnterListener}<br>
+	 * @see {@link ChangeListener}<br>
+	 * @see {@link LeaveListener}<br>
+	 * @see {@link EnterListener}<br>
 	 */
 	protected void setState(S next, boolean canInvokeListener)
 	{
@@ -373,6 +408,7 @@ public class StateTable<S extends State>
 		StateEntry<S> nowEntry = this.info.get(now);
 		PairEntry<S> e = this.table.get(now, next);
 
+		//紐づいたリスナーに通知
 		this.onChange(now, next, true);
 
 		if(this.global != null)
@@ -380,11 +416,13 @@ public class StateTable<S extends State>
 			this.global.onChange(this, now, next, true);
 		}
 
+		//遷移に紐づいたリスナーに変更を通知
 		if(e != null && e.getChangeListener() != null)
 		{
 			e.getChangeListener().onChange(this, now, next, true);
 		}
 
+		//状態に紐づいたリスナーに退出を通知
 		if(nowEntry != null && nowEntry.getLeave() != null)
 		{
 			nowEntry.getLeave().onLeave(this, now, next);
@@ -399,16 +437,19 @@ public class StateTable<S extends State>
 		StateEntry<S> nowEntry = this.info.get(now);
 		PairEntry<S> e = this.table.get(prev, now);
 
+		//状態に紐づいたリスナーに入室を通知
 		if(nowEntry != null && nowEntry.getEnter() != null)
 		{
 			nowEntry.getEnter().onEnter(this, prev, now);
 		}
 
+		//遷移に紐づいたリスナーに変更を通知
 		if(e != null && e.getChangeListener() != null)
 		{
 			e.getChangeListener().onChange(this, prev, now, false);
 		}
 
+		//紐づいたリスナーに通知
 		if(this.global != null)
 		{
 			this.global.onChange(this, prev, now, false);
@@ -440,6 +481,7 @@ public class StateTable<S extends State>
 			return;
 		}
 
+		//更新処理がある場合、更新する
 		Updatable action = e.getUpdate();
 		if(action == null)
 		{
@@ -514,9 +556,9 @@ public class StateTable<S extends State>
 		{
 
 			sb.append(tab3).append(e.getState()).append(enter);
-			sb.append(tab4).append("[Enter]").append(enter);
+			sb.append(tab4).append("[EnterListener]").append(enter);
 			sb.append(tab5).append(e.getEnter()).append(enter);
-			sb.append(tab4).append("[Leave]").append(enter);
+			sb.append(tab4).append("[LeaveListener]").append(enter);
 			sb.append(tab5).append(e.getLeave()).append(enter);
 			sb.append(tab4).append("[Update]").append(enter);
 			sb.append(tab5).append(e.getUpdate()).append(enter);
@@ -529,6 +571,9 @@ public class StateTable<S extends State>
 		return sb;
 	}
 
+	/**
+	 * 状態とその付属情報
+	 */
 	protected static class StateEntry<S extends State> {
 
 		private S state;
@@ -591,7 +636,9 @@ public class StateTable<S extends State>
 
 	}
 
-
+	/**
+	 * 遷移する状態の組
+	 */
 	protected static class PairEntry<S extends State> {
 
 		private S now;

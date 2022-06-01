@@ -12,6 +12,15 @@ public final class GraphicsUtil {
 
 	}
 
+	/**
+	 * グリッドを描画する
+	 * @param g {@link Graphics}
+	 * @param x 左上の横座標
+	 * @param y 左上の縦座標
+	 * @param w 横幅
+	 * @param h 縦幅
+	 * @param size マスのサイズ
+	 */
 	public static void drawGrid(Graphics g, int x, int y, int w, int h, int size)
 	{
 		int minX = x;

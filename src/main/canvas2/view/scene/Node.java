@@ -12,11 +12,12 @@ import canvas2.core.Drawable;
 import canvas2.core.debug.TextTree;
 import canvas2.util.TransformUtil;
 import canvas2.view.AppWindow;
+import canvas2.view.JScreen;
 
 /**
  * シーングラフのノードを示すクラス。<br>
  * このノードを描画するときは、
- * {@link AppWindow}のルートノードに登録する必要がある。<br>
+ * {@link AppWindow}や{@link JScreen}のルートノードに登録する必要がある。<br>
  * このノードの配下で描画するときは、このノードに登録する必要がある。
  */
 public class Node implements Drawable, TextTree{

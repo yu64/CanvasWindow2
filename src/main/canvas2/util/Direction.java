@@ -1,5 +1,7 @@
 package canvas2.util;
 
+import java.util.List;
+
 /**
  * 方位を示すクラス<br>
  * 全8方向。基本の4方向のみでループ可能。<br>
@@ -19,15 +21,15 @@ public enum Direction {
 
 	;
 
-	private static Direction[] FOUR = {
+	private static final List<Direction> FOUR = List.of(
 
 			NORTH,
 			WEST,
 			SOUTH,
-			EAST,
-	};
+			EAST
+	);
 
-	public static Direction[] getFour()
+	public static List<Direction> getFour()
 	{
 		return Direction.FOUR;
 	}
