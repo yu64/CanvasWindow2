@@ -20,16 +20,16 @@ public class MainSample4 {
 	{
 		App app = new App();
 
-		MainSample1.testColsed(app);
+		MainSample1.settingColsed(app);
 
 		Node leftRoot = new Node("leftRoot");
 		Node rightRoot = new Node("rightRoot");
 
-		MainSample1.testAxis(app, leftRoot);
-		MainSample1.testAxis(app, rightRoot);
+		MainSample1.settingAxis(app, leftRoot);
+		MainSample1.settingAxis(app, rightRoot);
 
-		MainSample2.testMouse(app, leftRoot, leftRoot);
-		MainSample2.testMouse(app, rightRoot, rightRoot);
+		MainSample2.settingMouse(app, leftRoot, leftRoot);
+		MainSample2.settingMouse(app, rightRoot, rightRoot);
 
 
 		AppWindow win = app.getWindow();

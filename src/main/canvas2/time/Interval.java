@@ -67,9 +67,20 @@ public abstract class Interval implements Updatable{
 			}
 		}
 	}
-
+	
+	/**
+	 * 経過時間を取得
+	 */
 	protected abstract double getElapsedTime(float tpf);
+	
+	/**
+	 * 待機時間から、実行可能な回数を取得
+	 */
 	protected abstract int getExecutionCount(float tpf, double elapsed);
+	
+	/**
+	 * 次回へ持ち越す時間を取得
+	 */
 	protected abstract double getCarryOver(float tpf, double elapsed, int count);
 
 }

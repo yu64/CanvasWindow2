@@ -27,7 +27,7 @@ public class FpsMeasurer implements Runnable{
 	
 	private long fixedUnitPerFrame;
 	private boolean canFix = false;
-
+	
 	public FpsMeasurer()
 	{
 		this(Clock.getInstance());
@@ -72,6 +72,17 @@ public class FpsMeasurer implements Runnable{
 		//1フレームにUnit(指定された時間の単位)がどのくらい存在するか
 		long unitPerFrame = now - this.prev;
 		
+		//Fpsを固定する場合、
+		if(this.canFix)
+		{
+			//遅延させる
+			this.delay(unitPerFrame);
+			
+			//再計算
+			now = this.clock.getTime(this.getUnit());
+			unitPerFrame = now - this.prev;
+		}
+		
 		//1秒にフレームがどのくらい存在するか
 		float framePerSecond = (float)this.ONE_SECOND / unitPerFrame;
 
@@ -81,21 +92,20 @@ public class FpsMeasurer implements Runnable{
 		//更新時間を変更。
 		this.prev = now;
 		
-		//Fpsを固定する場合、
-		if(!this.canFix)
-		{
-			return;
-		}
 		
+	
+	}
+	
+	protected void delay(long upf)
+	{
 		long fixedUpf = this.fixedUnitPerFrame;
-		long upf = unitPerFrame;
-		
+
 		//Upfが小さい(動作が早い)と、Fpsは大きくなる。
 		//つまり、Upfが小さいときは、待機する必要がある。
 		if(upf < fixedUpf)
 		{
-			//差分、待機する。
-			this.sleep(fixedUpf - upf);
+			long delay = (fixedUpf - upf);
+			this.sleep(delay);
 		}
 	}
 	
@@ -103,7 +113,7 @@ public class FpsMeasurer implements Runnable{
 	{
 		try
 		{
-			this.getUnit().sleep(time);
+			this.clock.sleep(time, this.getUnit());
 		}
 		catch(Exception e)
 		{

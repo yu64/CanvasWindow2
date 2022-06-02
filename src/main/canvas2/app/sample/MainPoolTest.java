@@ -50,42 +50,25 @@ public class MainPoolTest {
 		System.out.println("used " + entry.getUsedSize());
 		System.out.println("unused " + entry.getUnusedSize());
 
+		
+		for(int i = 0; i < 3; i++)
+		{
+			long startTime = System.nanoTime();
+	
+			System.out.println("get " + new Heavy());
+			System.out.println(System.nanoTime() - startTime);
+		}
+		
 
-		long startTime = System.nanoTime();
-
-		System.out.println("get " + new Heavy());
-		System.out.println(System.nanoTime() - startTime);
-
-		startTime = System.nanoTime();
-
-
-
-		Heavy obj = pool.obtain(Heavy.class);
-		System.out.println("get " + obj);
-		pool.free(obj);
-
-		System.out.println(System.nanoTime() - startTime);
-
-
-
-		startTime = System.nanoTime();
-
-		obj = pool.obtain(Heavy.class);
-		System.out.println("get " + obj);
-		pool.free(obj);
-
-		System.out.println(System.nanoTime() - startTime);
-
-
-
-		startTime = System.nanoTime();
-
-		obj = pool.obtain(Heavy.class);
-		System.out.println("get " + obj);
-		pool.free(obj);
-
-		System.out.println(System.nanoTime() - startTime);
-
+		for(int i = 0; i < 3; i++)
+		{
+			long startTime = System.nanoTime();
+			Heavy obj = pool.obtain(Heavy.class);
+			System.out.println("get " + obj);
+			pool.free(obj);
+			System.out.println(System.nanoTime() - startTime);
+		}
+		
 	}
 
 	private static class Heavy {
@@ -94,7 +77,7 @@ public class MainPoolTest {
 		{
 			try
 			{
-				TimeUnit.MICROSECONDS.sleep(100);
+				TimeUnit.MILLISECONDS.sleep(100);
 			}
 			catch (InterruptedException e)
 			{

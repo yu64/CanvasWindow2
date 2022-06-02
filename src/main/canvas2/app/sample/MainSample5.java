@@ -34,12 +34,12 @@ public class MainSample5 {
 
 		event.add(AWTEvent.class, KeyEvent.KEY_TYPED, hub.getHandler());
 
-		MainSample1.testColsed(app);
+		MainSample1.settingColsed(app);
 
 		app.start();
 	}
 
-	public static void testRect(App app, Node node, Dimension size)
+	public static void settingRect(App app, Node node, Dimension size)
 	{
 		int h = size.height;
 		int w = size.width;

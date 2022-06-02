@@ -31,10 +31,10 @@ public class MainSample1 {
 		Node overray = new Node("overrayNode");
 		app.getRootNode().add(overray);
 
-		MainSample1.testAxis(app, area);
-		MainSample1.testZoom(app, scroll);
-		MainSample1.testMove(app, scroll);
-		MainSample1.testColsed(app);
+		MainSample1.settingAxis(app, area);
+		MainSample1.settingZoom(app, scroll);
+		MainSample1.settingMove(app, scroll);
+		MainSample1.settingColsed(app);
 
 		app.start();
 		
@@ -47,7 +47,7 @@ public class MainSample1 {
 	/**
 	 * 座標軸を描画
 	 */
-	public static void testAxis(App app, Node node)
+	public static void settingAxis(App app, Node node)
 	{
 		//座標軸の描画
 		node.add(NamedLambda.wrap("axis", g2 -> {
@@ -67,7 +67,7 @@ public class MainSample1 {
 	 * キー: <br>
 	 * UP, DOWN
 	 */
-	public static void testZoom(App app, Node node)
+	public static void settingZoom(App app, Node node)
 	{
 		node.add(NamedLambda.wrap("zoomPoint", g2 -> {
 
@@ -104,7 +104,7 @@ public class MainSample1 {
 	 * キー: <br>
 	 * A, D, W, S
 	 */
-	public static void testMove(App app, Node node)
+	public static void settingMove(App app, Node node)
 	{
 		EventManager event = app.getEventManager();
 
@@ -162,7 +162,7 @@ public class MainSample1 {
 	 * キー: <br>
 	 * ESC
 	 */
-	public static void testColsed(App app)
+	public static void settingColsed(App app)
 	{
 		EventManager event = app.getEventManager();
 

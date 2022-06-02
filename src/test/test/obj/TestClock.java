@@ -8,12 +8,16 @@ public class TestClock extends Clock{
 
 	private long time = 0;
 
-	public void addTime(long v)
+	public void addTime(long ms)
 	{
-		this.time += v;
+		this.time += ms;
 	}
 
-
+	@Override
+	public void sleep(long time, TimeUnit unit) throws InterruptedException
+	{
+		this.time += unit.toMillis(time);
+	}
 
 	@Override
 	public long getTime(TimeUnit unit)

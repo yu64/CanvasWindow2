@@ -3,9 +3,9 @@ package canvas2.app.sample;
 import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,8 +14,10 @@ import canvas2.core.debug.TextTree;
 import canvas2.event.EventManager;
 import canvas2.event.awt.AwtListener;
 import canvas2.event.flag.KeyFlags;
+import canvas2.logic.AppLogic;
 import canvas2.state.StateTable;
 import canvas2.state.obj.StateName;
+import canvas2.time.FpsMeasurer;
 import canvas2.util.NamedLambda;
 import canvas2.view.scene.Node;
 import canvas2.view.scene.TrackingPane;
@@ -36,15 +38,15 @@ public class MainSample2 {
 		Node overray = new Node("overrayNode");
 		app.getRootNode().add(overray);
 
-		Point pos = MainSample2.testMovedCircle(app, area);
-		MainSample1.testAxis(app, area);
-		MainSample1.testZoom(app, scroll);
-		MainSample1.testMove(app, scroll);
-		MainSample1.testColsed(app);
-		MainSample2.testState(app, overray);
-		MainSample2.testMouse(app, area, scroll);
-		MainSample2.testSubFrame(app, area, overray, pos);
-
+		Point pos = MainSample2.settingMovedCircle(app, area);
+		MainSample1.settingAxis(app, area);
+		MainSample1.settingZoom(app, scroll);
+		MainSample1.settingMove(app, scroll);
+		MainSample1.settingColsed(app);
+		MainSample2.settingState(app, overray);
+		MainSample2.settingMouse(app, area, scroll);
+		MainSample2.settingSubFrame(app, area, overray, pos);
+		MainSample2.settingFps(app, overray);
 
 		System.out.println(app.getClass().getSimpleName() + " TextTree");
 		System.out.println(TextTree.getText(app));
@@ -57,7 +59,7 @@ public class MainSample2 {
 	/**
 	 * 回る円を描画
 	 */
-	public static Point testMovedCircle(App app, Node node)
+	public static Point settingMovedCircle(App app, Node node)
 	{
 
 		float[] value = {0};
@@ -101,7 +103,7 @@ public class MainSample2 {
 	 * キー: <br>
 	 * 1, 2, 3
 	 */
-	public static void testState(App app, Node node)
+	public static void settingState(App app, Node node)
 	{
 		EventManager event = app.getEventManager();
 
@@ -154,7 +156,7 @@ public class MainSample2 {
 	/**
 	 * マウスで左クリックした位置に円を描画する。<br>
 	 */
-	public static void testMouse(App app, Node area, Node scroll)
+	public static void settingMouse(App app, Node area, Node scroll)
 	{
 		EventManager event = app.getEventManager();
 
@@ -185,19 +187,19 @@ public class MainSample2 {
 	/**
 	 * 指定した座標を追跡するサブウィンドウを描画する。
 	 */
-	public static void testSubFrame(App app, Node area, Node overray, Point pos)
+	public static void settingSubFrame(App app, Node area, Node overray, Point pos)
 	{
 		TrackingPane sub = new TrackingPane("subFrame", "sub", area);
 		overray.add(sub);
 
-		Rectangle rect = new Rectangle(0, 0, 200, 200);
+		Ellipse2D circle = new Ellipse2D.Float(0, 0, 200, 200);
 
-		sub.setShape(rect);
+		sub.setShape(circle);
 		sub.getTransform().translate(20, 20);
 		sub.setBackground(NamedLambda.wrap("background", g2 -> {
 
 			g2.setColor(Color.LIGHT_GRAY);
-			g2.fill(rect);
+			g2.fill(circle);
 		}));
 
 		app.getLogic().add(NamedLambda.wrap("track", tpf -> {
@@ -206,6 +208,27 @@ public class MainSample2 {
 		}));
 
 
+	}
+	
+	/**
+	 * Fpsを表示する
+	 */
+	public static FpsMeasurer settingFps(App app, Node node)
+	{
+		AppLogic logic = app.getLogic();
+		
+		FpsMeasurer measurer = new FpsMeasurer();
+		
+		node.add(NamedLambda.wrap("fps", g2 -> {
+			
+			measurer.update();
+			g2.setColor(Color.BLUE);
+			g2.drawString("Fps(Draw):" + String.valueOf(measurer.getFps()), 700, 50);
+			g2.drawString("Fps(Update):" + String.format("%5f", logic.getFps()), 700, 70);
+			
+		}));
+		
+		return measurer;
 	}
 
 }
